@@ -621,6 +621,8 @@
     // =======================================================================
     // CONSTANTES Y CONFIGURACIÓN DE HOTEL TEMPLO (DONCELES 88)
     // =======================================================================
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzTDAPSYfC3vI9zDrjbPCwAGj6Pm2ZJfPzCXonkqg2RA5Lxehz-iaxwGnEFCIinrVWE/exec";
+
     const STORAGE_KEYS = {
       CATALOG: 'hotel_templo_catalogo_v1',
       MOVEMENTS: 'hotel_templo_movimientos_v1'
@@ -785,7 +787,7 @@
     ];
 
     // =======================================================================
-    // ESTADO EN MEMORIA Y PERSISTENCIA EN LOCALSTORAGE
+    // ESTADO EN MEMORIA Y PERSISTENCIA EN LOCALSTORAGE + GOOGLE SHEETS
     // =======================================================================
     let catalog = [];
     let movements = [];
@@ -811,6 +813,38 @@
         localStorage.setItem(STORAGE_KEYS.MOVEMENTS, JSON.stringify(movements));
       } catch (err) {
         showFeedback('Aviso: el almacenamiento local está lleno o restringido.', 'warn');
+      }
+    }
+
+    async function enviarAGoogleSheets(entry) {
+      if (!APPS_SCRIPT_URL) return;
+      try {
+        const payload = {
+          id: entry.id,
+          fecha: entry.fecha,
+          tipo_movimiento: entry.tipo,
+          codigo_barras: entry.codigo || '',
+          producto: entry.producto,
+          rama: entry.rama,
+          sub_rama: entry.subRama,
+          almacen_origen: entry.almacen,
+          cantidad_empaques: entry.empaques,
+          total_piezas: entry.totalPiezas,
+          costo_total: entry.costoTotal,
+          foto_url: entry.fotoNombre || '',
+          usuario: 'Hotel Templo PWA',
+          notas: entry.notas || ''
+        };
+
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } catch (err) {
+        console.error('Error al enviar movimiento a Google Sheets:', err);
+        showFeedback('Guardado localmente, pero hubo un problema de red al enviar a Google Sheets.', 'warn');
       }
     }
 
@@ -1101,7 +1135,6 @@
     function calculateStockRows(almacenFilter = 'TODOS') {
       const map = new Map();
 
-      // Inicializar desde catálogo para mostrar mínimos aunque aún no haya entradas
       const warehousesToCheck = almacenFilter === 'TODOS'
         ? ['Almacén General', 'Bodega']
         : [almacenFilter];
@@ -1591,6 +1624,7 @@
 
           movements.unshift(entry);
           saveState();
+          enviarAGoogleSheets(entry);
 
           showFeedback(
             `${tipo} guardada (${totalPiezas} pzas · ${formatCurrency(costoTotal)}) en ${almacen} → ${rama} / ${subRama}.`,
