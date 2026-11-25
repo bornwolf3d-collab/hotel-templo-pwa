@@ -713,7 +713,7 @@
 
     const DEFAULT_MOVEMENTS = [
       {
-        id: 'MOV-2001',
+        id: 'MOV-2026-001',
         fecha: '2026-11-25 08:15',
         tipo: 'ENTRADA',
         almacen: 'Almacén General',
@@ -731,7 +731,7 @@
         notas: 'Compra 6PK lote 03 AGO 26'
       },
       {
-        id: 'MOV-2002',
+        id: 'MOV-2026-002',
         fecha: '2026-11-25 09:00',
         tipo: 'ENTRADA',
         almacen: 'Bodega',
@@ -749,7 +749,7 @@
         notas: 'Ingreso a Bodega'
       },
       {
-        id: 'MOV-2003',
+        id: 'MOV-2026-003',
         fecha: '2026-11-25 09:45',
         tipo: 'ENTRADA',
         almacen: 'Almacén General',
@@ -767,7 +767,7 @@
         notas: 'Registro por foto sin código de barras'
       },
       {
-        id: 'MOV-2004',
+        id: 'MOV-2026-004',
         fecha: '2026-11-25 10:30',
         tipo: 'SALIDA',
         almacen: 'Almacén General',
@@ -794,6 +794,19 @@
     let currentPhoto = { name: '', dataUrl: '' };
     let cameraStream = null;
     let scanLoopId = null;
+
+    function getNextSequentialMovementId() {
+      let maxNum = 0;
+      movements.forEach((m) => {
+        const val = String((m && m.id) || '').trim();
+        const match = val.match(/^MOV-2026-(\d+)$/);
+        if (match) {
+          const num = parseInt(match[1], 10);
+          if (num > maxNum) maxNum = num;
+        }
+      });
+      return `MOV-2026-${String(maxNum + 1).padStart(3, '0')}`;
+    }
 
     function loadState() {
       try {
@@ -1604,7 +1617,7 @@
           }
 
           const entry = {
-            id: `MOV-${Date.now().toString().slice(-6)}`,
+            id: getNextSequentialMovementId(),
             fecha: nowTimestamp(),
             tipo,
             almacen,
@@ -1627,7 +1640,7 @@
           enviarAGoogleSheets(entry);
 
           showFeedback(
-            `${tipo} guardada (${totalPiezas} pzas · ${formatCurrency(costoTotal)}) en ${almacen} → ${rama} / ${subRama}.`,
+            `${entry.id} · ${tipo} guardada (${totalPiezas} pzas · ${formatCurrency(costoTotal)}) en ${almacen} → ${rama} / ${subRama}.`,
             'ok'
           );
 
