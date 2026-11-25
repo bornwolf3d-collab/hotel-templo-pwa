@@ -10,6 +10,23 @@
   <link id="pwaManifestLink" rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Hotel%20Templo%20%E2%80%93%20Almac%C3%A9n%20y%20Puntos%20de%20Venta%22%2C%22short_name%22%3A%22Hotel%20Templo%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230f172a%22%2C%22theme_color%22%3A%22%230f172a%22%2C%22orientation%22%3A%22portrait-primary%22%7D" />
 
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: {
+              800: '#2A4365',
+              900: '#1A365D',
+              custom: '#3C5E8F'
+            },
+            gold: '#D69E2E'
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -39,7 +56,7 @@
   <!-- ENCABEZADO SUPERIOR Y NAVEGACIÓN PRINCIPAL                             -->
   <!-- ===================================================================== -->
   <header class="bg-slate-900 text-white sticky top-0 z-30 shadow-md border-b border-slate-800">
-    <div class="max-w-6xl mx-auto px-4 py-3.5 sm:px-6">
+    <div class="max-w-7xl mx-auto px-4 py-3.5 sm:px-6">
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <!-- Identidad del hotel -->
         <div class="flex items-center justify-between gap-3">
@@ -52,12 +69,11 @@
                 Hotel Templo · Almacén y Puntos de Venta
               </h1>
               <p class="text-[11px] sm:text-xs text-slate-300 truncate">
-                Donceles 88 · 16 Habitaciones · Almacén General &amp; Bodega
+                Donceles 88 · 16 Habitaciones · Bodega, Almacén y Puntos de Venta
               </p>
             </div>
           </div>
 
-          <!-- Botón de instalación PWA / guía rápida en móvil -->
           <button type="button" id="installHintBtn"
             class="md:hidden shrink-0 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[11px] font-semibold text-amber-300 transition">
             Instalar PWA
@@ -72,9 +88,10 @@
             </label>
             <select id="globalAlmacenFilter"
               class="w-full sm:w-auto rounded-xl bg-slate-800 text-white border border-slate-600 px-3 py-2 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-400">
-              <option value="TODOS">Todos (General + Bodega)</option>
+              <option value="TODOS">Todos (General + Bodega + Almacén)</option>
               <option value="Almacén General">Almacén General</option>
               <option value="Bodega">Bodega</option>
+              <option value="Almacén">Almacén</option>
             </select>
           </div>
 
@@ -91,17 +108,25 @@
           class="nav-tab px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-amber-500 text-slate-950">
           Registrar Movimiento
         </button>
+        <button type="button" data-view="productos"
+          class="nav-tab px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-slate-800 text-slate-200 hover:bg-slate-700">
+          Catálogo de Productos
+        </button>
+        <button type="button" data-view="proveedores"
+          class="nav-tab px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-slate-800 text-slate-200 hover:bg-slate-700">
+          Proveedores
+        </button>
         <button type="button" data-view="almacenes"
           class="nav-tab px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-slate-800 text-slate-200 hover:bg-slate-700">
-          Stock por Almacén y General
+          Stock por Almacén
         </button>
         <button type="button" data-view="ventas"
           class="nav-tab px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-slate-800 text-slate-200 hover:bg-slate-700">
-          Salidas / Ventas por Punto de Venta
+          Puntos de Venta
         </button>
         <button type="button" data-view="bitacora"
           class="nav-tab px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-slate-800 text-slate-200 hover:bg-slate-700">
-          Bitácora de Movimientos
+          Bitácora
         </button>
       </nav>
     </div>
@@ -110,7 +135,7 @@
   <!-- ===================================================================== -->
   <!-- BANNER DE ESTADO / MENSAJES (SIN ALERT NI CONFIRM)                     -->
   <!-- ===================================================================== -->
-  <div class="max-w-6xl w-full mx-auto px-4 sm:px-6 mt-3">
+  <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 mt-3">
     <div id="feedbackBanner" role="status"
       class="hidden rounded-xl px-4 py-3 text-xs sm:text-sm font-medium border flex items-center justify-between gap-3 shadow-sm">
       <span id="feedbackBannerText"></span>
@@ -124,65 +149,102 @@
   <!-- ===================================================================== -->
   <!-- CONTENIDO PRINCIPAL DE VISTAS                                         -->
   <!-- ===================================================================== -->
-  <main class="max-w-6xl w-full mx-auto px-4 sm:px-6 pt-4 pb-24 sm:pb-12 flex-1 space-y-6">
+  <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-4 pb-24 sm:pb-12 flex-1 space-y-6">
 
     <!-- =================================================================== -->
-    <!-- VISTA 1: REGISTRAR MOVIMIENTO                                       -->
+    <!-- VISTA 1: REGISTRAR MOVIMIENTO (ENTRADA / TRASPASO / SALIDA)         -->
     <!-- =================================================================== -->
     <section id="view-registrar" class="space-y-5">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
 
-        <!-- Formulario principal de Entrada / Salida / Traspaso -->
+        <!-- Formulario principal de Entrada / Traspaso / Salida -->
         <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6">
           <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-4 border-b border-slate-100">
             <div>
               <h2 class="text-base sm:text-lg font-bold text-slate-900">Registrar Movimiento</h2>
               <p class="text-xs text-slate-500">
-                Compras a almacén (ENTRADA) o entregas/traspasos a puntos de venta (SALIDA / TRASPASO).
+                ENTRADA (compras desde proveedores), TRASPASO (entre almacenes) o SALIDA (a puntos de venta).
               </p>
             </div>
             <span id="formActiveAlmacenPill"
               class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-900 border border-amber-200">
-              Almacén: Almacén General
+              Filtro: Todos los almacenes
             </span>
           </div>
 
           <form id="movementForm" class="space-y-4">
-            <!-- Tipo de Movimiento + Almacén Origen / Almacén Destino -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
+            <!-- Tipo de Movimiento segregado en 3 botones: ENTRADA, TRASPASO, SALIDA -->
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
+              <div class="sm:col-span-7">
                 <label class="block text-xs font-semibold text-slate-700 mb-1.5">Tipo de Movimiento *</label>
-                <div class="grid grid-cols-2 gap-2" role="group" aria-label="Tipo de movimiento">
+                <div class="grid grid-cols-3 gap-2" role="group" aria-label="Tipo de movimiento">
                   <button type="button" id="btnTipoEntrada" data-tipo="ENTRADA"
-                    class="py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold border-2 border-emerald-600 bg-emerald-600 text-white transition">
+                    class="py-2.5 px-2.5 rounded-xl text-xs font-bold border-2 border-emerald-600 bg-emerald-600 text-white transition">
                     ENTRADA
                   </button>
+                  <button type="button" id="btnTipoTraspaso" data-tipo="TRASPASO"
+                    class="py-2.5 px-2.5 rounded-xl text-xs font-bold border-2 border-slate-200 bg-white text-slate-700 hover:border-slate-300 transition">
+                    TRASPASO
+                  </button>
                   <button type="button" id="btnTipoSalida" data-tipo="SALIDA"
-                    class="py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold border-2 border-slate-200 bg-white text-slate-700 hover:border-slate-300 transition">
-                    SALIDA / TRASPASO
+                    class="py-2.5 px-2.5 rounded-xl text-xs font-bold border-2 border-slate-200 bg-white text-slate-700 hover:border-slate-300 transition">
+                    SALIDA
                   </button>
                 </div>
                 <input type="hidden" id="tipoMovimiento" value="ENTRADA" />
               </div>
 
-              <div>
+              <div class="sm:col-span-5">
                 <label id="almacenOrigenLabel" for="almacenOrigen"
                   class="block text-xs font-semibold text-slate-700 mb-1.5">
-                  Almacén Origen / Resguardo *
+                  Almacén Destino (Entrada) *
                 </label>
                 <select id="almacenOrigen" required
                   class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500">
                   <option value="Almacén General">Almacén General</option>
                   <option value="Bodega">Bodega</option>
+                  <option value="Almacén">Almacén</option>
                 </select>
                 <p id="almacenOrigenHelp" class="text-[11px] text-slate-500 mt-1">
-                  En ENTRADA ingresa mercancía aquí; en SALIDA / TRASPASO se descuenta de este almacén.
+                  En ENTRADA ingresa mercancía aquí; en TRASPASO o SALIDA se descuenta de este almacén.
                 </p>
               </div>
             </div>
 
-            <!-- Rama Principal y Sub-rama / Punto de Venta -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+            <!-- Proveedor (solo visible en ENTRADA) -->
+            <div id="groupProveedorEntrada" class="p-3.5 rounded-xl bg-emerald-50/60 border border-emerald-200">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+                <label for="proveedorSelect" class="block text-xs font-semibold text-emerald-950">
+                  Proveedor de Compra / Entrada *
+                </label>
+                <button type="button" id="goProveedoresBtn"
+                  class="text-xs font-bold text-[#3C5E8F] hover:underline">
+                  + Administrar Proveedores
+                </button>
+              </div>
+              <select id="proveedorSelect"
+                class="w-full rounded-xl border border-emerald-300 bg-white px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+              </select>
+            </div>
+
+            <!-- Almacén Destino (solo visible en TRASPASO) -->
+            <div id="groupAlmacenDestino" class="hidden p-3.5 rounded-xl bg-amber-50/80 border border-amber-200">
+              <label for="almacenDestinoSelect" class="block text-xs font-semibold text-amber-950 mb-1.5">
+                Almacén Destino del Traspaso *
+              </label>
+              <select id="almacenDestinoSelect"
+                class="w-full rounded-xl border border-amber-300 bg-white px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                <option value="Bodega">Bodega</option>
+                <option value="Almacén">Almacén</option>
+                <option value="Almacén General">Almacén General</option>
+              </select>
+              <p class="text-[11px] text-amber-900 mt-1">
+                Movimiento físico interno entre almacenes (no se contabiliza como salida a punto de venta).
+              </p>
+            </div>
+
+            <!-- Rama Principal y Sub-rama / Punto de Venta (principal en SALIDA, referencia en ENTRADA) -->
+            <div id="groupRamaSubRama" class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-3.5 rounded-xl bg-slate-50 border border-slate-200">
               <div>
                 <label for="ramaSelect" class="block text-xs font-semibold text-slate-700 mb-1.5">
                   Rama Principal *
@@ -207,11 +269,17 @@
               </div>
             </div>
 
-            <!-- Selector rápido desde Catálogo de Hotel Templo -->
+            <!-- Selector rápido desde Catálogo de Hotel Templo + botón de alta -->
             <div>
-              <label for="catalogoSelect" class="block text-xs font-semibold text-slate-700 mb-1.5">
-                Seleccionar del Catálogo Hotel Templo (opcional o autocompleta al escanear)
-              </label>
+              <div class="flex items-center justify-between gap-2 mb-1.5">
+                <label for="catalogoSelect" class="block text-xs font-semibold text-slate-700">
+                  Seleccionar Producto Existente (con o sin código de barras)
+                </label>
+                <button type="button" id="goCatalogoBtn"
+                  class="text-xs font-bold text-[#3C5E8F] hover:underline">
+                  + Gestionar / Dar de Alta Producto
+                </button>
+              </div>
               <select id="catalogoSelect"
                 class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500">
               </select>
@@ -225,18 +293,16 @@
                 </label>
                 <div class="flex gap-2">
                   <input type="text" id="codigoBarrasInput"
-                    placeholder="Escanea con lector o escribe SKU / código..."
+                    placeholder="Escanea o escribe código (opcional)..."
                     class="flex-1 min-w-0 rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500" />
                   <button type="button" id="toggleCameraScannerBtn"
                     class="shrink-0 px-3 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition flex items-center gap-1.5">
-                    <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M21 17v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2M8 12h8M12 8v8" />
-                    </svg>
+                    <i class="fa-solid fa-barcode text-amber-400"></i>
                     <span id="scannerBtnLabel">Cámara</span>
                   </button>
                 </div>
                 <p id="barcodeMatchBadge" class="text-[11px] font-medium text-slate-500 mt-1">
-                  Soporta pistola USB/Bluetooth, entrada manual o cámara en HTTPS.
+                  Puedes dejarlo en blanco si el producto no tiene código de barras.
                 </p>
               </div>
 
@@ -315,7 +381,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label for="evidenciaFotoInput" class="block text-xs font-semibold text-slate-700 mb-1.5">
-                  Foto de Evidencia (cámara o galería)
+                  Foto de Evidencia (se optimiza y guarda en bitácora)
                 </label>
                 <input type="file" id="evidenciaFotoInput" accept="image/*" capture="environment"
                   class="block w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-900 file:text-white hover:file:bg-slate-800 cursor-pointer" />
@@ -323,7 +389,7 @@
                 <div id="fotoPreviewContainer"
                   class="hidden mt-2.5 flex items-center gap-3 p-2 rounded-xl bg-slate-50 border border-slate-200">
                   <img id="fotoPreviewImage" src="" alt="Vista previa de evidencia"
-                    class="w-16 h-16 rounded-lg object-cover border border-slate-300 shrink-0" />
+                    class="w-16 h-16 rounded-lg object-cover border border-slate-300 shrink-0 cursor-pointer" />
                   <div class="min-w-0 flex-1">
                     <p id="fotoPreviewName" class="text-xs font-semibold text-slate-800 truncate"></p>
                     <button type="button" id="removeFotoBtn"
@@ -358,14 +424,14 @@
           </form>
         </div>
 
-        <!-- Panel lateral: Catálogo precargado Hotel Templo + Alta rápida -->
+        <!-- Panel lateral: Alta rápida y selección de productos existentes -->
         <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 flex flex-col justify-between space-y-5">
           <div>
             <div class="flex items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-100">
               <div>
-                <h3 class="text-base font-bold text-slate-900">Catálogo Hotel Templo</h3>
+                <h3 class="text-base font-bold text-slate-900">Productos Existentes</h3>
                 <p class="text-xs text-slate-500">
-                  Incluye códigos duales (6PK y pieza suelta) y artículos sin código de barras.
+                  Toca un producto (con o sin código de barras) para cargarlo al movimiento.
                 </p>
               </div>
               <span id="catalogCountBadge"
@@ -374,15 +440,23 @@
               </span>
             </div>
 
-            <!-- Botones rápidos de productos clave -->
-            <div id="quickCatalogList" class="space-y-2 max-h-72 overflow-y-auto pr-1"></div>
+            <input type="search" id="quickCatalogSearch"
+              placeholder="Filtrar producto por nombre o código..."
+              class="w-full mb-2.5 rounded-xl border border-slate-300 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500" />
+
+            <div id="quickCatalogList" class="space-y-2 max-h-64 overflow-y-auto pr-1"></div>
           </div>
 
-          <!-- Formulario compacto para agregar nuevo artículo al catálogo -->
+          <!-- Formulario compacto para dar de alta producto existente o nuevo -->
           <form id="addCatalogForm" class="pt-4 border-t border-slate-200 space-y-2.5">
-            <p class="text-xs font-bold text-slate-800 uppercase tracking-wider">
-              Agregar Producto al Catálogo
-            </p>
+            <div class="flex items-center justify-between">
+              <p class="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                Dar de Alta Producto (Con o Sin Código)
+              </p>
+              <button type="button" id="openFullCatalogBtn" class="text-[11px] font-bold text-[#3C5E8F] hover:underline">
+                Ver catálogo completo
+              </button>
+            </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <input type="text" id="newCatNombre" placeholder="Nombre del producto *"
                 class="rounded-xl border border-slate-300 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500" />
@@ -422,7 +496,7 @@
             </div>
             <button type="submit"
               class="w-full py-2 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition">
-              + Guardar en Catálogo
+              + Alta de Producto en Catálogo
             </button>
           </form>
         </div>
@@ -431,10 +505,173 @@
     </section>
 
     <!-- =================================================================== -->
-    <!-- VISTA 2: STOCK POR ALMACÉN Y STOCK GENERAL                          -->
+    <!-- VISTA 2: CATÁLOGO DE PRODUCTOS EXISTENTES (ALTA, EDICIÓN, ELIMINAR) -->
+    <!-- =================================================================== -->
+    <section id="view-productos" class="hidden space-y-5">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <!-- Formulario completo de alta o edición de producto -->
+        <div class="lg:col-span-4 bg-white rounded-2xl border border-slate-200 shadow-sm p-5 h-fit">
+          <div class="flex items-center justify-between mb-3">
+            <h2 id="catalogFormTitle" class="text-base font-bold text-slate-900">Alta de Producto Existente</h2>
+            <button type="button" id="cancelEditCatalogBtn" class="hidden text-xs font-bold text-slate-500 hover:underline">
+              Cancelar edición
+            </button>
+          </div>
+          <p class="text-xs text-slate-500 mb-4">
+            Da de alta productos con código de barras, con SKU interno o sin código de barras.
+          </p>
+
+          <form id="fullCatalogForm" class="space-y-3">
+            <input type="hidden" id="editCatalogId" value="" />
+            <div>
+              <label for="catNombreInput" class="block text-xs font-semibold text-slate-700 mb-1">Nombre del Producto *</label>
+              <input type="text" id="catNombreInput" required placeholder="Ej. Aceite de Oliva Extra Virgen 5L"
+                class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label for="catCodigoInput" class="block text-xs font-semibold text-slate-700 mb-1">Código de Barras / SKU</label>
+                <input type="text" id="catCodigoInput" placeholder="Opcional (vacío si no tiene)"
+                  class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+              </div>
+              <div>
+                <label for="catAlternoInput" class="block text-xs font-semibold text-slate-700 mb-1">Código Alterno / Dual</label>
+                <input type="text" id="catAlternoInput" placeholder="Opcional"
+                  class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+              </div>
+            </div>
+            <div class="grid grid-cols-3 gap-2.5">
+              <div>
+                <label for="catPiezasEmpInput" class="block text-xs font-semibold text-slate-700 mb-1">Pzas/Emp *</label>
+                <input type="number" id="catPiezasEmpInput" min="1" value="1" required
+                  class="w-full rounded-xl border border-slate-300 px-2.5 py-2 text-sm font-semibold" />
+              </div>
+              <div>
+                <label for="catCostoEmpInput" class="block text-xs font-semibold text-slate-700 mb-1">Costo Emp ($) *</label>
+                <input type="number" id="catCostoEmpInput" min="0" step="0.01" value="0.00" required
+                  class="w-full rounded-xl border border-slate-300 px-2.5 py-2 text-sm font-semibold" />
+              </div>
+              <div>
+                <label for="catStockMinInput" class="block text-xs font-semibold text-slate-700 mb-1">Stock Mín</label>
+                <input type="number" id="catStockMinInput" min="0" value="5"
+                  class="w-full rounded-xl border border-slate-300 px-2.5 py-2 text-sm font-semibold" />
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2.5">
+              <div>
+                <label for="catRamaInput" class="block text-xs font-semibold text-slate-700 mb-1">Rama</label>
+                <select id="catRamaInput" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white">
+                  <option value="Hotel">Hotel</option>
+                  <option value="Restaurante">Restaurante</option>
+                </select>
+              </div>
+              <div>
+                <label for="catSubRamaInput" class="block text-xs font-semibold text-slate-700 mb-1">Sub-rama / PDV</label>
+                <select id="catSubRamaInput" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white">
+                  <option value="Habitaciones">Habitaciones</option>
+                  <option value="Lavandería">Lavandería</option>
+                  <option value="Recepción">Recepción</option>
+                  <option value="Piso">Piso</option>
+                  <option value="Barra">Barra</option>
+                  <option value="Cocina">Cocina</option>
+                </select>
+              </div>
+            </div>
+            <button type="submit" id="saveFullCatalogBtn"
+              class="w-full py-2.5 px-4 rounded-xl bg-[#3C5E8F] hover:bg-navy-900 text-white text-sm font-bold transition">
+              Guardar Producto en Catálogo
+            </button>
+          </form>
+        </div>
+
+        <!-- Tabla de productos existentes -->
+        <div class="lg:col-span-8 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+            <div>
+              <h3 class="text-base font-bold text-slate-900">Listado de Productos Existentes</h3>
+              <p class="text-xs text-slate-500">Usa un producto en movimientos, edítalo o elimínalo.</p>
+            </div>
+            <input type="search" id="fullCatalogSearch" placeholder="Buscar por nombre o código..."
+              class="w-full sm:w-64 rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm" />
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-slate-200 bg-slate-50 text-[11px] uppercase tracking-wider text-slate-500">
+                  <th class="py-2.5 px-3">Producto</th>
+                  <th class="py-2.5 px-3">Código / SKU</th>
+                  <th class="py-2.5 px-3 text-right">Pzas/Emp</th>
+                  <th class="py-2.5 px-3 text-right">Costo Emp</th>
+                  <th class="py-2.5 px-3">Área</th>
+                  <th class="py-2.5 px-3 text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="fullCatalogTableBody" class="divide-y divide-slate-100 text-xs sm:text-sm"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- VISTA 3: GESTIÓN DE PROVEEDORES                                     -->
+    <!-- =================================================================== -->
+    <section id="view-proveedores" class="hidden space-y-5">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div class="md:col-span-5 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm h-fit">
+          <h2 class="text-base sm:text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-truck-field text-[#3C5E8F]"></i>
+            <span>Agregar Proveedor</span>
+          </h2>
+          <form id="addProveedorForm" class="space-y-4">
+            <div>
+              <label for="inputNuevoProveedor" class="block text-xs font-semibold uppercase text-slate-600 mb-1">
+                Nombre del Proveedor *
+              </label>
+              <input type="text" id="inputNuevoProveedor" required placeholder="Ej. Sam's Club, Aurrera, Walmart, Oaxaqueños"
+                class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-amber-500" />
+            </div>
+            <div>
+              <label for="inputCategoriaProveedor" class="block text-xs font-semibold uppercase text-slate-600 mb-1">
+                Giro / Categoría
+              </label>
+              <input type="text" id="inputCategoriaProveedor" placeholder="Ej. Abarrotes, Blancos, Bebidas"
+                class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-amber-500" />
+            </div>
+            <button type="submit"
+              class="w-full py-2.5 bg-[#3C5E8F] hover:bg-navy-900 text-white rounded-xl text-sm font-bold transition">
+              + Guardar Proveedor
+            </button>
+          </form>
+        </div>
+
+        <div class="md:col-span-7 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base sm:text-lg font-bold text-slate-900">Directorio de Proveedores</h3>
+            <span id="badgeTotalProveedores" class="text-xs bg-blue-100 text-[#3C5E8F] px-3 py-1 rounded-full font-bold">0</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-50 text-slate-500 text-xs font-semibold uppercase border-b border-slate-200">
+                  <th class="p-3">Proveedor</th>
+                  <th class="p-3">Categoría</th>
+                  <th class="p-3 text-center">Entradas</th>
+                  <th class="p-3 text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tablaProveedoresBody" class="divide-y divide-slate-100 text-sm"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- VISTA 4: STOCK POR ALMACÉN                                          -->
     <!-- =================================================================== -->
     <section id="view-almacenes" class="hidden space-y-5">
-      <!-- KPIs superiores -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
           <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Almacén General</p>
@@ -449,19 +686,18 @@
         </div>
 
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
-          <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Stock General Consolidado</p>
+          <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Stock Consolidado</p>
           <p id="kpiStockTotalPzas" class="text-2xl font-extrabold text-amber-700 mt-1">0 pzas</p>
           <p id="kpiStockTotalVal" class="text-xs font-semibold text-slate-700 mt-0.5">Valor total: $0.00</p>
         </div>
       </div>
 
-      <!-- Buscador y pestañas rápidas de almacén -->
       <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
           <div>
-            <h2 class="text-base sm:text-lg font-bold text-slate-900">Existencias por Almacén y Stock General</h2>
+            <h2 class="text-base sm:text-lg font-bold text-slate-900">Existencias por Almacén</h2>
             <p class="text-xs text-slate-500">
-              Calculado en tiempo real a partir de ENTRADAS menos SALIDAS / TRASPASOS.
+              Calculado en tiempo real según ENTRADAS, TRASPASOS y SALIDAS.
             </p>
           </div>
           <input type="search" id="stockFilterText"
@@ -490,7 +726,7 @@
     </section>
 
     <!-- =================================================================== -->
-    <!-- VISTA 3: VENTAS / SALIDAS POR PUNTO DE VENTA                        -->
+    <!-- VISTA 5: VENTAS / SALIDAS POR PUNTO DE VENTA                        -->
     <!-- =================================================================== -->
     <section id="view-ventas" class="hidden space-y-5">
       <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6">
@@ -502,7 +738,6 @@
             </p>
           </div>
 
-          <!-- Filtro rápido por punto de venta -->
           <select id="posDetailSelect"
             class="rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
             <option value="TODOS">Todos los puntos de venta</option>
@@ -515,10 +750,8 @@
           </select>
         </div>
 
-        <!-- Tarjetas de los 6 puntos de venta -->
         <div id="posCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6"></div>
 
-        <!-- Detalle de salidas hacia puntos de venta -->
         <h3 class="text-sm font-bold text-slate-900 mb-2.5">Detalle de Entregas / Ventas por Sub-rama</h3>
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
@@ -540,7 +773,7 @@
     </section>
 
     <!-- =================================================================== -->
-    <!-- VISTA 4: BITÁCORA DE MOVIMIENTOS Y EXPORTACIÓN CSV                  -->
+    <!-- VISTA 6: BITÁCORA DE MOVIMIENTOS (FILTROS, EDITAR, ELIMINAR, CSV)   -->
     <!-- =================================================================== -->
     <section id="view-bitacora" class="hidden space-y-5">
       <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6">
@@ -548,7 +781,7 @@
           <div>
             <h2 class="text-base sm:text-lg font-bold text-slate-900">Bitácora de Movimientos</h2>
             <p class="text-xs text-slate-500">
-              Historial completo guardado en localStorage y exportable a CSV compatible con Google Sheets.
+              Filtra por ENTRADA, TRASPASO, SALIDA o proveedor; edita cualquier registro o elimínalo con confirmación en pantalla.
             </p>
           </div>
 
@@ -557,17 +790,23 @@
               class="rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800">
               <option value="TODOS">Todos los movimientos</option>
               <option value="ENTRADA">Solo ENTRADA</option>
-              <option value="SALIDA">Solo SALIDA / TRASPASO</option>
+              <option value="TRASPASO">Solo TRASPASO</option>
+              <option value="SALIDA">Solo SALIDA</option>
+            </select>
+
+            <select id="bitacoraProveedorFilter"
+              class="rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800">
+              <option value="TODOS">Todos los proveedores</option>
             </select>
 
             <button type="button" id="exportCsvBtn"
               class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition">
-              Exportar CSV (Google Sheets)
+              Exportar CSV
             </button>
 
             <button type="button" id="restoreDemoDataBtn"
               class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition">
-              Restablecer Datos Demo
+              Restablecer Demo
             </button>
           </div>
         </div>
@@ -576,14 +815,15 @@
           <table class="w-full text-left border-collapse">
             <thead>
               <tr class="border-b border-slate-200 bg-slate-50 text-[11px] uppercase tracking-wider text-slate-500">
-                <th class="py-2.5 px-3 rounded-tl-xl">Fecha / Hora</th>
+                <th class="py-2.5 px-3 rounded-tl-xl">Folio / Fecha</th>
                 <th class="py-2.5 px-3">Tipo</th>
-                <th class="py-2.5 px-3">Almacén</th>
-                <th class="py-2.5 px-3">Rama / Sub-rama</th>
+                <th class="py-2.5 px-3">Proveedor / Almacén</th>
+                <th class="py-2.5 px-3">Destino / PDV</th>
                 <th class="py-2.5 px-3">Código / Producto</th>
                 <th class="py-2.5 px-3 text-right">Piezas</th>
                 <th class="py-2.5 px-3 text-right">Costo ($)</th>
-                <th class="py-2.5 px-3 text-center rounded-tr-xl">Foto / Notas</th>
+                <th class="py-2.5 px-3 text-center">Foto / Notas</th>
+                <th class="py-2.5 px-3 text-right rounded-tr-xl">Acciones</th>
               </tr>
             </thead>
             <tbody id="bitacoraTableBody" class="divide-y divide-slate-100 text-xs sm:text-sm"></tbody>
@@ -595,24 +835,180 @@
   </main>
 
   <!-- ===================================================================== -->
+  <!-- MODAL PARA EDITAR MOVIMIENTO (CON FOTO Y CAMPOS POR TIPO)             -->
+  <!-- ===================================================================== -->
+  <div id="editMovementModal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden border border-slate-200 my-auto">
+      <div class="bg-slate-900 text-white px-5 py-4 flex items-center justify-between">
+        <h3 class="font-bold text-base">
+          Editar Movimiento <span id="editModalFolio" class="text-amber-300 font-mono"></span>
+        </h3>
+        <button type="button" id="closeEditModalBtn" class="text-slate-300 hover:text-white text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="editMovementForm" class="p-5 space-y-4">
+        <input type="hidden" id="editMovId" />
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label for="editMovFecha" class="block text-xs font-semibold text-slate-700 mb-1">Fecha / Hora *</label>
+            <input type="text" id="editMovFecha" required
+              class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+          </div>
+          <div>
+            <label for="editMovTipo" class="block text-xs font-semibold text-slate-700 mb-1">Tipo *</label>
+            <select id="editMovTipo" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white">
+              <option value="ENTRADA">ENTRADA</option>
+              <option value="TRASPASO">TRASPASO</option>
+              <option value="SALIDA">SALIDA</option>
+            </select>
+          </div>
+          <div>
+            <label for="editMovAlmacen" class="block text-xs font-semibold text-slate-700 mb-1">Almacén Origen *</label>
+            <select id="editMovAlmacen" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white">
+              <option value="Almacén General">Almacén General</option>
+              <option value="Bodega">Bodega</option>
+              <option value="Almacén">Almacén</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div id="editProveedorWrap">
+            <label for="editMovProveedor" class="block text-xs font-semibold text-slate-700 mb-1">Proveedor</label>
+            <select id="editMovProveedor" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white"></select>
+          </div>
+          <div id="editAlmacenDestinoWrap" class="hidden">
+            <label for="editMovAlmacenDestino" class="block text-xs font-semibold text-slate-700 mb-1">Almacén Destino</label>
+            <select id="editMovAlmacenDestino" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white">
+              <option value="Bodega">Bodega</option>
+              <option value="Almacén">Almacén</option>
+              <option value="Almacén General">Almacén General</option>
+            </select>
+          </div>
+          <div id="editSubRamaWrap">
+            <label for="editMovSubRama" class="block text-xs font-semibold text-slate-700 mb-1">Sub-rama / Punto de Venta</label>
+            <select id="editMovSubRama" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white">
+              <option value="Habitaciones">Habitaciones</option>
+              <option value="Lavandería">Lavandería</option>
+              <option value="Recepción">Recepción</option>
+              <option value="Piso">Piso</option>
+              <option value="Barra">Barra</option>
+              <option value="Cocina">Cocina</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
+          <div class="sm:col-span-4">
+            <label for="editMovCodigo" class="block text-xs font-semibold text-slate-700 mb-1">Código / SKU (opcional)</label>
+            <input type="text" id="editMovCodigo" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+          </div>
+          <div class="sm:col-span-8">
+            <label for="editMovProducto" class="block text-xs font-semibold text-slate-700 mb-1">Producto *</label>
+            <input type="text" id="editMovProducto" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label for="editMovEmpaques" class="block text-xs font-semibold text-slate-700 mb-1">Empaques *</label>
+            <input type="number" id="editMovEmpaques" min="1" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold" />
+          </div>
+          <div>
+            <label for="editMovPiezas" class="block text-xs font-semibold text-slate-700 mb-1">Total Piezas *</label>
+            <input type="number" id="editMovPiezas" min="1" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold" />
+          </div>
+          <div>
+            <label for="editMovCosto" class="block text-xs font-semibold text-slate-700 mb-1">Costo Total ($) *</label>
+            <input type="number" id="editMovCosto" min="0" step="0.01" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold" />
+          </div>
+        </div>
+
+        <!-- Foto en edición -->
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <label for="editMovFotoInput" class="text-xs font-semibold text-slate-700">
+              Foto de Evidencia (reemplazar o agregar)
+            </label>
+            <button type="button" id="editRemoveFotoBtn" class="text-xs font-bold text-rose-600 hover:underline">
+              Eliminar foto actual
+            </button>
+          </div>
+          <input type="file" id="editMovFotoInput" accept="image/*" capture="environment"
+            class="block w-full text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-900 file:text-white" />
+          <div id="editFotoPreviewBox" class="hidden flex items-center gap-3 pt-1">
+            <img id="editFotoPreviewImg" src="" alt="Evidencia en edición"
+              class="w-16 h-16 rounded-lg object-cover border border-slate-300" />
+            <span id="editFotoPreviewLabel" class="text-xs text-slate-600 truncate"></span>
+          </div>
+        </div>
+
+        <div>
+          <label for="editMovNotas" class="block text-xs font-semibold text-slate-700 mb-1">Notas</label>
+          <input type="text" id="editMovNotas" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+        </div>
+
+        <div class="flex justify-end gap-2.5 pt-3 border-t border-slate-100">
+          <button type="button" id="cancelEditModalBtn"
+            class="px-4 py-2 rounded-xl border border-slate-300 text-slate-700 text-xs sm:text-sm font-semibold">
+            Cancelar
+          </button>
+          <button type="submit"
+            class="px-5 py-2 rounded-xl bg-[#3C5E8F] hover:bg-navy-900 text-white text-xs sm:text-sm font-bold">
+            Guardar Cambios
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- VISOR DE FOTO AMPLIADA                                                -->
+  <!-- ===================================================================== -->
+  <div id="photoLightboxModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-200">
+      <div class="bg-slate-900 text-white px-4 py-3 flex items-center justify-between">
+        <span id="lightboxTitle" class="text-xs sm:text-sm font-bold truncate">Evidencia Fotográfica</span>
+        <button type="button" id="closeLightboxBtn" class="text-slate-300 hover:text-white text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="p-4 bg-slate-950 flex items-center justify-center">
+        <img id="lightboxImage" src="" alt="Evidencia ampliada" class="max-h-[70vh] w-auto rounded-xl object-contain" />
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
   <!-- BARRA DE NAVEGACIÓN INFERIOR EN MÓVILES                               -->
   <!-- ===================================================================== -->
   <nav aria-label="Navegación móvil"
-    class="sm:hidden fixed bottom-0 inset-x-0 bg-slate-900 text-white border-t border-slate-800 px-1.5 py-1.5 z-40 grid grid-cols-4 gap-1">
+    class="sm:hidden fixed bottom-0 inset-x-0 bg-slate-900 text-white border-t border-slate-800 px-1 py-1.5 z-40 grid grid-cols-6 gap-0.5">
     <button type="button" data-view="registrar"
-      class="mobile-nav-tab py-1.5 px-1 rounded-xl text-[10px] font-bold bg-amber-500 text-slate-950 truncate">
-      Registrar
+      class="mobile-nav-tab py-1.5 px-0.5 rounded-lg text-[10px] font-bold bg-amber-500 text-slate-950 truncate">
+      Movim.
+    </button>
+    <button type="button" data-view="productos"
+      class="mobile-nav-tab py-1.5 px-0.5 rounded-lg text-[10px] font-semibold text-slate-300 truncate">
+      Prods.
+    </button>
+    <button type="button" data-view="proveedores"
+      class="mobile-nav-tab py-1.5 px-0.5 rounded-lg text-[10px] font-semibold text-slate-300 truncate">
+      Prov.
     </button>
     <button type="button" data-view="almacenes"
-      class="mobile-nav-tab py-1.5 px-1 rounded-xl text-[10px] font-semibold text-slate-300 truncate">
-      Almacenes
+      class="mobile-nav-tab py-1.5 px-0.5 rounded-lg text-[10px] font-semibold text-slate-300 truncate">
+      Stock
     </button>
     <button type="button" data-view="ventas"
-      class="mobile-nav-tab py-1.5 px-1 rounded-xl text-[10px] font-semibold text-slate-300 truncate">
-      Ventas
+      class="mobile-nav-tab py-1.5 px-0.5 rounded-lg text-[10px] font-semibold text-slate-300 truncate">
+      PDV
     </button>
     <button type="button" data-view="bitacora"
-      class="mobile-nav-tab py-1.5 px-1 rounded-xl text-[10px] font-semibold text-slate-300 truncate">
+      class="mobile-nav-tab py-1.5 px-0.5 rounded-lg text-[10px] font-semibold text-slate-300 truncate">
       Bitácora
     </button>
   </nav>
@@ -624,8 +1020,9 @@
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzTDAPSYfC3vI9zDrjbPCwAGj6Pm2ZJfPzCXonkqg2RA5Lxehz-iaxwGnEFCIinrVWE/exec";
 
     const STORAGE_KEYS = {
-      CATALOG: 'hotel_templo_catalogo_v1',
-      MOVEMENTS: 'hotel_templo_movimientos_v1'
+      CATALOG: 'hotel_templo_catalogo_v2',
+      MOVEMENTS: 'hotel_templo_movimientos_v2',
+      PROVIDERS: 'hotel_templo_proveedores_v2'
     };
 
     const SUB_RAMAS_MAP = {
@@ -640,6 +1037,14 @@
       { rama: 'Restaurante', subRama: 'Piso', desc: 'Servicio de mesas y comedor' },
       { rama: 'Restaurante', subRama: 'Barra', desc: 'Bebidas, jugos y preparación' },
       { rama: 'Restaurante', subRama: 'Cocina', desc: 'Insumos y operación culinaria' }
+    ];
+
+    const DEFAULT_PROVIDERS = [
+      { id: 'PROV-1', nombre: "Sam's Club", categoria: 'Mayorista / Abarrotes' },
+      { id: 'PROV-2', nombre: 'Aurrera', categoria: 'Abarrotes' },
+      { id: 'PROV-3', nombre: 'Walmart', categoria: 'Suministros Varios' },
+      { id: 'PROV-4', nombre: 'Oaxaqueños', categoria: 'Insumos Locales' },
+      { id: 'PROV-5', nombre: 'Otros', categoria: 'Proveedores Varios' }
     ];
 
     const DEFAULT_CATALOG = [
@@ -716,7 +1121,9 @@
         id: 'MOV-2026-001',
         fecha: '2026-11-25 08:15',
         tipo: 'ENTRADA',
+        proveedor: "Sam's Club",
         almacen: 'Almacén General',
+        almacenDestino: '',
         rama: 'Restaurante',
         subRama: 'Barra',
         codigo: '7501013102987',
@@ -734,7 +1141,9 @@
         id: 'MOV-2026-002',
         fecha: '2026-11-25 09:00',
         tipo: 'ENTRADA',
+        proveedor: 'Walmart',
         almacen: 'Bodega',
+        almacenDestino: '',
         rama: 'Hotel',
         subRama: 'Recepción',
         codigo: '7509991000481',
@@ -752,7 +1161,9 @@
         id: 'MOV-2026-003',
         fecha: '2026-11-25 09:45',
         tipo: 'ENTRADA',
+        proveedor: 'Oaxaqueños',
         almacen: 'Almacén General',
+        almacenDestino: '',
         rama: 'Restaurante',
         subRama: 'Cocina',
         codigo: '',
@@ -770,7 +1181,9 @@
         id: 'MOV-2026-004',
         fecha: '2026-11-25 10:30',
         tipo: 'SALIDA',
+        proveedor: 'N/A',
         almacen: 'Almacén General',
+        almacenDestino: '',
         rama: 'Restaurante',
         subRama: 'Barra',
         codigo: '7501013106930',
@@ -787,11 +1200,14 @@
     ];
 
     // =======================================================================
-    // ESTADO EN MEMORIA Y PERSISTENCIA EN LOCALSTORAGE + GOOGLE SHEETS
+    // ESTADO EN MEMORIA Y PERSISTENCIA
     // =======================================================================
     let catalog = [];
     let movements = [];
+    let providers = [];
     let currentPhoto = { name: '', dataUrl: '' };
+    let editPhotoState = { name: '', dataUrl: '' };
+    let pendingDeleteMovementId = null;
     let cameraStream = null;
     let scanLoopId = null;
 
@@ -812,11 +1228,14 @@
       try {
         const rawCat = localStorage.getItem(STORAGE_KEYS.CATALOG);
         const rawMov = localStorage.getItem(STORAGE_KEYS.MOVEMENTS);
+        const rawProv = localStorage.getItem(STORAGE_KEYS.PROVIDERS);
         catalog = rawCat ? JSON.parse(rawCat) : [...DEFAULT_CATALOG];
         movements = rawMov ? JSON.parse(rawMov) : [...DEFAULT_MOVEMENTS];
+        providers = rawProv ? JSON.parse(rawProv) : [...DEFAULT_PROVIDERS];
       } catch (err) {
         catalog = [...DEFAULT_CATALOG];
         movements = [...DEFAULT_MOVEMENTS];
+        providers = [...DEFAULT_PROVIDERS];
       }
     }
 
@@ -824,8 +1243,9 @@
       try {
         localStorage.setItem(STORAGE_KEYS.CATALOG, JSON.stringify(catalog));
         localStorage.setItem(STORAGE_KEYS.MOVEMENTS, JSON.stringify(movements));
+        localStorage.setItem(STORAGE_KEYS.PROVIDERS, JSON.stringify(providers));
       } catch (err) {
-        showFeedback('Aviso: el almacenamiento local está lleno o restringido.', 'warn');
+        showFeedback('Aviso: el almacenamiento local está lleno; intenta quitar fotos muy pesadas.', 'warn');
       }
     }
 
@@ -836,11 +1256,13 @@
           id: entry.id,
           fecha: entry.fecha,
           tipo_movimiento: entry.tipo,
+          proveedor: entry.proveedor || 'N/A',
           codigo_barras: entry.codigo || '',
           producto: entry.producto,
           rama: entry.rama,
           sub_rama: entry.subRama,
           almacen_origen: entry.almacen,
+          almacen_destino: entry.almacenDestino || '',
           cantidad_empaques: entry.empaques,
           total_piezas: entry.totalPiezas,
           costo_total: entry.costoTotal,
@@ -857,12 +1279,11 @@
         });
       } catch (err) {
         console.error('Error al enviar movimiento a Google Sheets:', err);
-        showFeedback('Guardado localmente, pero hubo un problema de red al enviar a Google Sheets.', 'warn');
       }
     }
 
     // =======================================================================
-    // UTILIDADES DE FORMATO Y NOTIFICACIÓN
+    // UTILIDADES DE FORMATO, COMPRESIÓN DE FOTO Y NOTIFICACIÓN
     // =======================================================================
     function formatCurrency(val) {
       return new Intl.NumberFormat('es-MX', {
@@ -901,11 +1322,60 @@
       banner.classList.remove('hidden');
     }
 
+    // Optimiza la imagen en canvas para conservar nitidez y un tamaño seguro en localStorage
+    function compressImageFile(file, maxDim = 900, quality = 0.78) {
+      return new Promise((resolve) => {
+        if (!file) {
+          resolve({ name: '', dataUrl: '' });
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const img = new Image();
+          img.onload = () => {
+            let { width, height } = img;
+            if (width > maxDim || height > maxDim) {
+              if (width >= height) {
+                height = Math.round((height * maxDim) / width);
+                width = maxDim;
+              } else {
+                width = Math.round((width * maxDim) / height);
+                height = maxDim;
+              }
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+            resolve({ name: file.name || 'evidencia.jpg', dataUrl: compressedDataUrl });
+          };
+          img.onerror = () => resolve({ name: file.name || 'evidencia.jpg', dataUrl: ev.target.result || '' });
+          img.src = ev.target.result;
+        };
+        reader.onerror = () => resolve({ name: file.name || 'evidencia.jpg', dataUrl: '' });
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function openPhotoLightbox(title, dataUrl) {
+      if (!dataUrl) return;
+      document.getElementById('lightboxTitle').textContent = title || 'Evidencia Fotográfica';
+      document.getElementById('lightboxImage').src = dataUrl;
+      document.getElementById('photoLightboxModal').classList.remove('hidden');
+    }
+
+    function closePhotoLightbox() {
+      document.getElementById('photoLightboxModal').classList.add('hidden');
+      document.getElementById('lightboxImage').src = '';
+    }
+
     // =======================================================================
     // NAVEGACIÓN ENTRE VISTAS
     // =======================================================================
     function switchView(viewName) {
-      const views = ['registrar', 'almacenes', 'ventas', 'bitacora'];
+      const views = ['registrar', 'productos', 'proveedores', 'almacenes', 'ventas', 'bitacora'];
       views.forEach((v) => {
         const el = document.getElementById(`view-${v}`);
         if (el) el.classList.toggle('hidden', v !== viewName);
@@ -921,21 +1391,23 @@
       document.querySelectorAll('.mobile-nav-tab').forEach((btn) => {
         const active = btn.dataset.view === viewName;
         btn.className = active
-          ? 'mobile-nav-tab py-1.5 px-1 rounded-xl text-[10px] font-bold bg-amber-500 text-slate-950 truncate'
-          : 'mobile-nav-tab py-1.5 px-1 rounded-xl text-[10px] font-semibold text-slate-300 truncate';
+          ? 'mobile-nav-tab py-1.5 px-0.5 rounded-lg text-[10px] font-bold bg-amber-500 text-slate-950 truncate'
+          : 'mobile-nav-tab py-1.5 px-0.5 rounded-lg text-[10px] font-semibold text-slate-300 truncate';
       });
 
       if (viewName !== 'registrar') {
         stopCameraScanner();
       }
 
+      if (viewName === 'productos') renderFullCatalogView();
+      if (viewName === 'proveedores') renderProvidersView();
       if (viewName === 'almacenes') renderStockView();
       if (viewName === 'ventas') renderSalesView();
       if (viewName === 'bitacora') renderBitacoraView();
     }
 
     // =======================================================================
-    // FORMULARIO: RAMA / SUB-RAMA, CATÁLOGO Y CÁLCULOS
+    // FORMULARIO DE MOVIMIENTO: ENTRADA, TRASPASO Y SALIDA
     // =======================================================================
     function populateSubRamaOptions(rama, preferredSubRama = '') {
       const select = document.getElementById('subRamaSelect');
@@ -962,25 +1434,48 @@
     function setMovementType(tipo) {
       document.getElementById('tipoMovimiento').value = tipo;
       const btnEntrada = document.getElementById('btnTipoEntrada');
+      const btnTraspaso = document.getElementById('btnTipoTraspaso');
       const btnSalida = document.getElementById('btnTipoSalida');
+
+      const baseInactive = 'py-2.5 px-2.5 rounded-xl text-xs font-bold border-2 border-slate-200 bg-white text-slate-700 hover:border-slate-300 transition';
+      btnEntrada.className = baseInactive;
+      btnTraspaso.className = baseInactive;
+      btnSalida.className = baseInactive;
+
+      const groupProv = document.getElementById('groupProveedorEntrada');
+      const groupDest = document.getElementById('groupAlmacenDestino');
+      const groupRama = document.getElementById('groupRamaSubRama');
       const label = document.getElementById('almacenOrigenLabel');
       const help = document.getElementById('almacenOrigenHelp');
       const submitBtn = document.getElementById('submitMovementBtn');
 
       if (tipo === 'ENTRADA') {
-        btnEntrada.className = 'py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold border-2 border-emerald-600 bg-emerald-600 text-white transition';
-        btnSalida.className = 'py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold border-2 border-slate-200 bg-white text-slate-700 hover:border-slate-300 transition';
+        btnEntrada.className = 'py-2.5 px-2.5 rounded-xl text-xs font-bold border-2 border-emerald-600 bg-emerald-600 text-white transition';
+        groupProv.classList.remove('hidden');
+        groupDest.classList.add('hidden');
+        groupRama.classList.remove('hidden');
         label.textContent = 'Almacén Destino (Entrada) *';
-        help.textContent = 'La compra o ingreso se suma al inventario de este almacén.';
+        help.textContent = 'La compra desde el proveedor ingresa a este almacén.';
         submitBtn.textContent = 'Guardar ENTRADA en Inventario';
         submitBtn.className = 'flex-1 py-3 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm transition';
-      } else {
-        btnSalida.className = 'py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold border-2 border-amber-600 bg-amber-500 text-slate-950 transition';
-        btnEntrada.className = 'py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold border-2 border-slate-200 bg-white text-slate-700 hover:border-slate-300 transition';
-        label.textContent = 'Almacén Origen (Salida) *';
-        help.textContent = 'Se descuenta del almacén origen y se asigna al punto de venta.';
-        submitBtn.textContent = 'Guardar SALIDA / TRASPASO';
+      } else if (tipo === 'TRASPASO') {
+        btnTraspaso.className = 'py-2.5 px-2.5 rounded-xl text-xs font-bold border-2 border-amber-500 bg-amber-500 text-slate-950 transition';
+        groupProv.classList.add('hidden');
+        groupDest.classList.remove('hidden');
+        groupRama.classList.add('hidden');
+        label.textContent = 'Almacén Origen (Traspaso) *';
+        help.textContent = 'Se descuenta de este almacén y pasa al almacén destino.';
+        submitBtn.textContent = 'Guardar TRASPASO entre Almacenes';
         submitBtn.className = 'flex-1 py-3 px-5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-sm shadow-sm transition';
+      } else {
+        btnSalida.className = 'py-2.5 px-2.5 rounded-xl text-xs font-bold border-2 border-indigo-600 bg-indigo-600 text-white transition';
+        groupProv.classList.add('hidden');
+        groupDest.classList.add('hidden');
+        groupRama.classList.remove('hidden');
+        label.textContent = 'Almacén Origen (Salida) *';
+        help.textContent = 'Se descuenta del almacén y se entrega al punto de venta.';
+        submitBtn.textContent = 'Guardar SALIDA a Punto de Venta';
+        submitBtn.className = 'flex-1 py-3 px-5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-sm transition';
       }
     }
 
@@ -989,28 +1484,25 @@
       const pzasEmp = Math.max(0, Number(document.getElementById('piezasPorEmpaqueInput').value || 0));
       const costoEmp = Math.max(0, Number(document.getElementById('costoEmpaqueInput').value || 0));
 
-      const totalPiezas = emp * pzasEmp;
-      const costoTotal = emp * costoEmp;
-
-      document.getElementById('calcTotalPiezas').textContent = totalPiezas.toLocaleString('es-MX');
-      document.getElementById('calcCostoTotal').textContent = formatCurrency(costoTotal);
+      document.getElementById('calcTotalPiezas').textContent = (emp * pzasEmp).toLocaleString('es-MX');
+      document.getElementById('calcCostoTotal').textContent = formatCurrency(emp * costoEmp);
     }
 
     function fillFormFromCatalogItem(item) {
       if (!item) return;
-      document.getElementById('codigoBarrasInput').value = item.codigo || item.codigoAlterno || '';
+      document.getElementById('codigoBarrasInput').value = item.codigo || '';
       document.getElementById('productoNombreInput').value = item.nombre;
-      document.getElementById('ramaSelect').value = item.rama;
-      populateSubRamaOptions(item.rama, item.subRama);
-      document.getElementById('piezasPorEmpaqueInput').value = item.piezasPorEmpaque;
+      document.getElementById('ramaSelect').value = item.rama || 'Hotel';
+      populateSubRamaOptions(item.rama || 'Hotel', item.subRama || '');
+      document.getElementById('piezasPorEmpaqueInput').value = item.piezasPorEmpaque || 1;
       document.getElementById('costoEmpaqueInput').value = Number(item.costoEmpaque || 0).toFixed(2);
       updateCalculatedTotals();
 
       const badge = document.getElementById('barcodeMatchBadge');
       if (item.codigo) {
-        badge.textContent = `Vinculado al catálogo: ${item.codigo} (${item.piezasPorEmpaque} pzas/empaque).`;
+        badge.textContent = `Producto vinculado: ${item.codigo} (${item.piezasPorEmpaque || 1} pzas/empaque).`;
       } else {
-        badge.textContent = `Artículo sin código de barras (${item.codigoAlterno || 'Identificación por nombre y foto'}).`;
+        badge.textContent = `Producto sin código de barras (${item.codigoAlterno || 'Identificación por nombre y foto'}).`;
       }
     }
 
@@ -1020,42 +1512,240 @@
       return catalog.find((c) => c.codigo === clean) || catalog.find((c) => c.codigoAlterno === clean) || null;
     }
 
+    // =======================================================================
+    // CATÁLOGO DE PRODUCTOS EXISTENTES (LISTA RÁPIDA + GESTOR COMPLETO)
+    // =======================================================================
     function renderCatalogUI() {
       document.getElementById('catalogCountBadge').textContent = `${catalog.length} ítems`;
 
       const select = document.getElementById('catalogoSelect');
-      select.innerHTML = '<option value="">-- Seleccionar producto del catálogo --</option>';
-
-      const listEl = document.getElementById('quickCatalogList');
-      listEl.innerHTML = '';
+      const prevSelected = select.value;
+      select.innerHTML = '<option value="">-- Seleccionar producto existente (con o sin código) --</option>';
 
       catalog.forEach((item) => {
         const opt = document.createElement('option');
         opt.value = item.id;
         opt.textContent = `${item.nombre} ${item.codigo ? `[${item.codigo}]` : '[Sin código]'}`;
         select.appendChild(opt);
-
-        const cardBtn = document.createElement('button');
-        cardBtn.type = 'button';
-        cardBtn.className = 'w-full text-left p-2.5 rounded-xl border border-slate-200 hover:border-amber-400 hover:bg-amber-50/50 transition flex items-center justify-between gap-2';
-        cardBtn.innerHTML = `
-          <div class="min-w-0">
-            <p class="text-xs font-bold text-slate-900 truncate">${item.nombre}</p>
-            <p class="text-[11px] text-slate-500">
-              ${item.codigo ? `<span class="font-mono">${item.codigo}</span>` : '<span class="italic">Sin código de barras</span>'}
-              · ${item.piezasPorEmpaque} pzas/emp
-            </p>
-          </div>
-          <span class="shrink-0 text-xs font-bold text-emerald-700">${formatCurrency(item.costoEmpaque)}</span>
-        `;
-        cardBtn.addEventListener('click', () => {
-          select.value = item.id;
-          fillFormFromCatalogItem(item);
-          switchView('registrar');
-          showFeedback(`Producto cargado: ${item.nombre}`, 'ok');
-        });
-        listEl.appendChild(cardBtn);
       });
+      if (prevSelected) select.value = prevSelected;
+
+      const quickQuery = (document.getElementById('quickCatalogSearch').value || '').trim().toLowerCase();
+      const listEl = document.getElementById('quickCatalogList');
+      listEl.innerHTML = '';
+
+      const filteredQuick = catalog.filter((item) => {
+        if (!quickQuery) return true;
+        return (
+          item.nombre.toLowerCase().includes(quickQuery) ||
+          (item.codigo || '').toLowerCase().includes(quickQuery) ||
+          (item.codigoAlterno || '').toLowerCase().includes(quickQuery)
+        );
+      });
+
+      if (filteredQuick.length === 0) {
+        listEl.innerHTML = '<p class="text-xs text-slate-400 py-4 text-center">No hay productos que coincidan.</p>';
+      } else {
+        filteredQuick.forEach((item) => {
+          const cardBtn = document.createElement('button');
+          cardBtn.type = 'button';
+          cardBtn.className = 'w-full text-left p-2.5 rounded-xl border border-slate-200 hover:border-amber-400 hover:bg-amber-50/50 transition flex items-center justify-between gap-2';
+          cardBtn.innerHTML = `
+            <div class="min-w-0">
+              <p class="text-xs font-bold text-slate-900 truncate">${item.nombre}</p>
+              <p class="text-[11px] text-slate-500">
+                ${item.codigo ? `<span class="font-mono">${item.codigo}</span>` : '<span class="italic text-amber-800">Sin código de barras</span>'}
+                · ${item.piezasPorEmpaque || 1} pzas/emp · ${item.subRama || item.rama}
+              </p>
+            </div>
+            <span class="shrink-0 text-xs font-bold text-emerald-700">${formatCurrency(item.costoEmpaque)}</span>
+          `;
+          cardBtn.addEventListener('click', () => {
+            select.value = item.id;
+            fillFormFromCatalogItem(item);
+            switchView('registrar');
+            showFeedback(`Cargado: ${item.nombre}`, 'ok');
+          });
+          listEl.appendChild(cardBtn);
+        });
+      }
+
+      if (!document.getElementById('view-productos').classList.contains('hidden')) {
+        renderFullCatalogView();
+      }
+    }
+
+    function renderFullCatalogView() {
+      const q = (document.getElementById('fullCatalogSearch').value || '').trim().toLowerCase();
+      const tbody = document.getElementById('fullCatalogTableBody');
+      tbody.innerHTML = '';
+
+      const items = catalog.filter((c) => {
+        if (!q) return true;
+        return (
+          c.nombre.toLowerCase().includes(q) ||
+          (c.codigo || '').toLowerCase().includes(q) ||
+          (c.codigoAlterno || '').toLowerCase().includes(q) ||
+          (c.subRama || '').toLowerCase().includes(q)
+        );
+      });
+
+      if (items.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="py-6 text-center text-slate-400">No hay productos registrados con este filtro.</td></tr>';
+        return;
+      }
+
+      items.forEach((item) => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50';
+        tr.innerHTML = `
+          <td class="py-2.5 px-3 font-semibold text-slate-900">${item.nombre}</td>
+          <td class="py-2.5 px-3 font-mono text-xs text-slate-600">${item.codigo || '<span class="italic text-slate-400">Sin código</span>'}</td>
+          <td class="py-2.5 px-3 text-right font-semibold">${item.piezasPorEmpaque || 1}</td>
+          <td class="py-2.5 px-3 text-right font-semibold text-emerald-700">${formatCurrency(item.costoEmpaque)}</td>
+          <td class="py-2.5 px-3 text-xs text-slate-600">${item.rama || 'Hotel'} · ${item.subRama || ''}</td>
+          <td class="py-2.5 px-3 text-right whitespace-nowrap">
+            <div class="inline-flex items-center gap-1.5">
+              <button type="button" onclick="useCatalogItemInMovement('${item.id}')"
+                class="px-2.5 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-950 text-xs font-bold">
+                Usar
+              </button>
+              <button type="button" onclick="startEditCatalogItem('${item.id}')"
+                class="p-1.5 rounded-lg text-blue-600 hover:bg-blue-50" title="Editar producto">
+                <i class="fa-solid fa-pen"></i>
+              </button>
+              <button type="button" onclick="deleteCatalogItem('${item.id}')"
+                class="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50" title="Eliminar producto">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function useCatalogItemInMovement(id) {
+      const item = catalog.find((c) => c.id === id);
+      if (!item) return;
+      document.getElementById('catalogoSelect').value = item.id;
+      fillFormFromCatalogItem(item);
+      switchView('registrar');
+      showFeedback(`Producto "${item.nombre}" listo para registrar movimiento.`, 'ok');
+    }
+
+    function startEditCatalogItem(id) {
+      const item = catalog.find((c) => c.id === id);
+      if (!item) return;
+      document.getElementById('editCatalogId').value = item.id;
+      document.getElementById('catNombreInput').value = item.nombre;
+      document.getElementById('catCodigoInput').value = item.codigo || '';
+      document.getElementById('catAlternoInput').value = item.codigoAlterno || '';
+      document.getElementById('catPiezasEmpInput').value = item.piezasPorEmpaque || 1;
+      document.getElementById('catCostoEmpInput').value = Number(item.costoEmpaque || 0).toFixed(2);
+      document.getElementById('catStockMinInput').value = item.stockMinimo || 0;
+      document.getElementById('catRamaInput').value = item.rama || 'Hotel';
+      document.getElementById('catSubRamaInput').value = item.subRama || 'Habitaciones';
+      document.getElementById('catalogFormTitle').textContent = 'Editar Producto Existente';
+      document.getElementById('saveFullCatalogBtn').textContent = 'Actualizar Producto';
+      document.getElementById('cancelEditCatalogBtn').classList.remove('hidden');
+    }
+
+    function resetFullCatalogForm() {
+      document.getElementById('fullCatalogForm').reset();
+      document.getElementById('editCatalogId').value = '';
+      document.getElementById('catalogFormTitle').textContent = 'Alta de Producto Existente';
+      document.getElementById('saveFullCatalogBtn').textContent = 'Guardar Producto en Catálogo';
+      document.getElementById('cancelEditCatalogBtn').classList.add('hidden');
+    }
+
+    function deleteCatalogItem(id) {
+      const item = catalog.find((c) => c.id === id);
+      if (!item) return;
+      catalog = catalog.filter((c) => c.id !== id);
+      saveState();
+      renderCatalogUI();
+      showFeedback(`Producto "${item.nombre}" eliminado del catálogo.`, 'ok');
+    }
+
+    // =======================================================================
+    // GESTIÓN DE PROVEEDORES (AGREGAR Y ELIMINAR)
+    // =======================================================================
+    function populateProviderSelects() {
+      const entradaSelect = document.getElementById('proveedorSelect');
+      const editSelect = document.getElementById('editMovProveedor');
+      const filterSelect = document.getElementById('bitacoraProveedorFilter');
+
+      const currentEntrada = entradaSelect.value;
+      const currentFilter = filterSelect.value;
+
+      entradaSelect.innerHTML = '';
+      editSelect.innerHTML = '<option value="N/A">N/A</option>';
+      filterSelect.innerHTML = '<option value="TODOS">Todos los proveedores</option>';
+
+      providers.forEach((p) => {
+        const opt1 = document.createElement('option');
+        opt1.value = p.nombre;
+        opt1.textContent = p.nombre;
+        entradaSelect.appendChild(opt1);
+
+        const opt2 = document.createElement('option');
+        opt2.value = p.nombre;
+        opt2.textContent = p.nombre;
+        editSelect.appendChild(opt2);
+
+        const opt3 = document.createElement('option');
+        opt3.value = p.nombre;
+        opt3.textContent = p.nombre;
+        filterSelect.appendChild(opt3);
+      });
+
+      if (currentEntrada && providers.some((p) => p.nombre === currentEntrada)) {
+        entradaSelect.value = currentEntrada;
+      }
+      if (currentFilter) {
+        filterSelect.value = currentFilter;
+      }
+    }
+
+    function renderProvidersView() {
+      document.getElementById('badgeTotalProveedores').textContent = `${providers.length} activos`;
+      const tbody = document.getElementById('tablaProveedoresBody');
+      tbody.innerHTML = '';
+
+      if (providers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400">No hay proveedores registrados.</td></tr>';
+        return;
+      }
+
+      providers.forEach((p) => {
+        const countEntradas = movements.filter((m) => m.tipo === 'ENTRADA' && m.proveedor === p.nombre).length;
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50';
+        tr.innerHTML = `
+          <td class="p-3 font-bold text-slate-900">${p.nombre}</td>
+          <td class="p-3 text-xs text-slate-600">${p.categoria || 'General'}</td>
+          <td class="p-3 text-center text-xs font-bold text-emerald-700">${countEntradas}</td>
+          <td class="p-3 text-right">
+            <button type="button" onclick="deleteProvider('${p.id}')"
+              class="px-2.5 py-1 rounded-lg text-rose-600 hover:bg-rose-50 text-xs font-bold inline-flex items-center gap-1">
+              <i class="fa-solid fa-trash"></i>
+              <span>Quitar</span>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function deleteProvider(id) {
+      const prov = providers.find((p) => p.id === id);
+      if (!prov) return;
+      providers = providers.filter((p) => p.id !== id);
+      saveState();
+      populateProviderSelects();
+      renderProvidersView();
+      showFeedback(`Proveedor "${prov.nombre}" eliminado.`, 'ok');
     }
 
     // =======================================================================
@@ -1068,7 +1758,7 @@
 
       if (!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         panel.classList.remove('hidden');
-        statusText.textContent = 'La cámara web requiere contexto seguro (HTTPS o localhost). Usa tu lector USB/Bluetooth o escribe el código.';
+        statusText.textContent = 'La cámara requiere HTTPS o localhost. Usa tu lector USB/Bluetooth o escribe el código.';
         return;
       }
 
@@ -1090,7 +1780,7 @@
           : null;
 
         if (!detector) {
-          statusText.textContent = 'Cámara activa. Este navegador no soporta BarcodeDetector nativo; enfoca o usa tu lector/escribe el código.';
+          statusText.textContent = 'Cámara activa. Ingresa el código manualmente o usa tu lector.';
           return;
         }
 
@@ -1111,20 +1801,20 @@
                 fillFormFromCatalogItem(matched);
                 showFeedback(`Código escaneado: ${detectedCode} → ${matched.nombre}`, 'ok');
               } else {
-                showFeedback(`Código escaneado: ${detectedCode}. Completa o selecciona el producto.`, 'warn');
+                showFeedback(`Código escaneado: ${detectedCode}. Completa el nombre del producto.`, 'warn');
               }
               stopCameraScanner();
               return;
             }
           } catch (scanErr) {
-            // Continúa intentando en el siguiente cuadro
+            // Continúa escaneando
           }
           scanLoopId = requestAnimationFrame(detectFrame);
         };
 
         scanLoopId = requestAnimationFrame(detectFrame);
       } catch (err) {
-        statusText.textContent = 'No se pudo abrir la cámara (revisa permisos del navegador o usa lector USB/Bluetooth).';
+        statusText.textContent = 'No se pudo abrir la cámara (revisa permisos o usa lector USB/Bluetooth).';
       }
     }
 
@@ -1143,13 +1833,13 @@
     }
 
     // =======================================================================
-    // CÁLCULOS DE INVENTARIO (ALMACÉN GENERAL, BODEGA Y PUNTOS DE VENTA)
+    // CÁLCULOS DE INVENTARIO (ENTRADA, TRASPASO Y SALIDA)
     // =======================================================================
     function calculateStockRows(almacenFilter = 'TODOS') {
       const map = new Map();
 
       const warehousesToCheck = almacenFilter === 'TODOS'
-        ? ['Almacén General', 'Bodega']
+        ? ['Almacén General', 'Bodega', 'Almacén']
         : [almacenFilter];
 
       catalog.forEach((cat) => {
@@ -1169,33 +1859,51 @@
         });
       });
 
-      movements.forEach((m) => {
-        if (almacenFilter !== 'TODOS' && m.almacen !== almacenFilter) return;
-        const key = `${m.almacen}||${m.producto}`;
+      const ensureRow = (alm, mov) => {
+        const key = `${alm}||${mov.producto}`;
         if (!map.has(key)) {
           map.set(key, {
-            producto: m.producto,
-            codigo: m.codigo || '',
+            producto: mov.producto,
+            codigo: mov.codigo || '',
             codigoAlterno: '',
-            almacen: m.almacen,
-            piezasPorEmpaque: m.piezasPorEmpaque || 1,
-            costoEmpaque: m.costoEmpaque || 0,
+            almacen: alm,
+            piezasPorEmpaque: mov.piezasPorEmpaque || 1,
+            costoEmpaque: mov.costoEmpaque || 0,
             stockMinimo: 0,
             piezas: 0,
             valor: 0
           });
         }
+        return map.get(key);
+      };
 
-        const row = map.get(key);
-        if (m.codigo && !row.codigo) row.codigo = m.codigo;
-        if (m.piezasPorEmpaque > 0) row.piezasPorEmpaque = m.piezasPorEmpaque;
+      movements.forEach((m) => {
+        const pzas = Number(m.totalPiezas || 0);
+        const val = Number(m.costoTotal || 0);
 
         if (m.tipo === 'ENTRADA') {
-          row.piezas += Number(m.totalPiezas || 0);
-          row.valor += Number(m.costoTotal || 0);
+          if (almacenFilter === 'TODOS' || m.almacen === almacenFilter) {
+            const row = ensureRow(m.almacen, m);
+            row.piezas += pzas;
+            row.valor += val;
+          }
+        } else if (m.tipo === 'TRASPASO') {
+          if (almacenFilter === 'TODOS' || m.almacen === almacenFilter) {
+            const origRow = ensureRow(m.almacen, m);
+            origRow.piezas -= pzas;
+            origRow.valor -= val;
+          }
+          if (m.almacenDestino && (almacenFilter === 'TODOS' || m.almacenDestino === almacenFilter)) {
+            const destRow = ensureRow(m.almacenDestino, m);
+            destRow.piezas += pzas;
+            destRow.valor += val;
+          }
         } else if (m.tipo === 'SALIDA') {
-          row.piezas -= Number(m.totalPiezas || 0);
-          row.valor -= Number(m.costoTotal || 0);
+          if (almacenFilter === 'TODOS' || m.almacen === almacenFilter) {
+            const row = ensureRow(m.almacen, m);
+            row.piezas -= pzas;
+            row.valor -= val;
+          }
         }
       });
 
@@ -1213,11 +1921,12 @@
 
       const allGen = calculateStockRows('Almacén General');
       const allBod = calculateStockRows('Bodega');
+      const allAlm = calculateStockRows('Almacén');
 
       const genPzas = allGen.reduce((acc, r) => acc + r.piezas, 0);
       const genVal = allGen.reduce((acc, r) => acc + r.valor, 0);
-      const bodPzas = allBod.reduce((acc, r) => acc + r.piezas, 0);
-      const bodVal = allBod.reduce((acc, r) => acc + r.valor, 0);
+      const bodPzas = allBod.reduce((acc, r) => acc + r.piezas, 0) + allAlm.reduce((acc, r) => acc + r.piezas, 0);
+      const bodVal = allBod.reduce((acc, r) => acc + r.valor, 0) + allAlm.reduce((acc, r) => acc + r.valor, 0);
 
       document.getElementById('kpiStockGeneralPzas').textContent = `${genPzas.toLocaleString('es-MX')} pzas`;
       document.getElementById('kpiStockGeneralVal').textContent = `Valor: ${formatCurrency(genVal)}`;
@@ -1256,7 +1965,7 @@
         tr.className = 'hover:bg-slate-50';
         tr.innerHTML = `
           <td class="py-2.5 px-3 font-semibold text-slate-900">${r.producto}</td>
-          <td class="py-2.5 px-3 font-mono text-xs text-slate-600">${r.codigo || 'Sin código'}</td>
+          <td class="py-2.5 px-3 font-mono text-xs text-slate-600">${r.codigo || '<span class="italic text-slate-400">Sin código</span>'}</td>
           <td class="py-2.5 px-3 text-xs font-medium text-slate-700">${r.almacen}</td>
           <td class="py-2.5 px-3 text-right font-semibold">${empText}</td>
           <td class="py-2.5 px-3 text-right font-bold text-slate-950">${r.piezas.toLocaleString('es-MX')}</td>
@@ -1364,13 +2073,18 @@
       });
     }
 
+    // =======================================================================
+    // BITÁCORA: RENDER, EDICIÓN Y ELIMINACIÓN SIN ALERT/CONFIRM
+    // =======================================================================
     function renderBitacoraView() {
       const globalAlm = document.getElementById('globalAlmacenFilter').value;
       const tipoFilter = document.getElementById('bitacoraTipoFilter').value;
+      const provFilter = document.getElementById('bitacoraProveedorFilter').value;
 
       const rows = movements.filter((m) => {
-        if (globalAlm !== 'TODOS' && m.almacen !== globalAlm) return false;
+        if (globalAlm !== 'TODOS' && m.almacen !== globalAlm && m.almacenDestino !== globalAlm) return false;
         if (tipoFilter !== 'TODOS' && m.tipo !== tipoFilter) return false;
+        if (provFilter !== 'TODOS' && m.proveedor !== provFilter) return false;
         return true;
       });
 
@@ -1378,39 +2092,162 @@
       tbody.innerHTML = '';
 
       if (rows.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="py-6 text-center text-slate-500">No hay movimientos en bitácora con este filtro.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" class="py-6 text-center text-slate-500">No hay movimientos en bitácora con este filtro.</td></tr>';
         return;
       }
 
       rows.forEach((m) => {
-        const isEntrada = m.tipo === 'ENTRADA';
+        let badgeClass = 'bg-emerald-100 text-emerald-800';
+        if (m.tipo === 'TRASPASO') badgeClass = 'bg-amber-100 text-amber-950';
+        if (m.tipo === 'SALIDA') badgeClass = 'bg-indigo-100 text-indigo-800';
+
+        const destinoText = m.tipo === 'TRASPASO'
+          ? `${m.almacen} → <strong>${m.almacenDestino || 'Almacén'}</strong>`
+          : `${m.rama || 'Hotel'} · <strong>${m.subRama || 'N/A'}</strong>`;
+
+        const provAlmText = m.tipo === 'ENTRADA'
+          ? `<p class="font-semibold text-slate-800">${m.proveedor || 'Sin proveedor'}</p><p class="text-[11px] text-slate-500">${m.almacen}</p>`
+          : `<p class="text-xs font-medium text-slate-700">${m.almacen}</p>`;
+
+        const photoHtml = m.fotoDataUrl
+          ? `<button type="button" onclick="openPhotoLightbox('${m.id} · ${escapeAttr(m.fotoNombre || 'Evidencia')}', '${m.fotoDataUrl}')"
+               class="inline-block group" title="Ampliar foto">
+               <img src="${m.fotoDataUrl}" alt="${escapeAttr(m.fotoNombre || 'Evidencia')}"
+                 class="w-11 h-11 rounded-lg object-cover border border-slate-300 group-hover:ring-2 group-hover:ring-amber-400" />
+             </button>`
+          : `<span class="text-xs text-slate-400">${m.fotoNombre || 'Sin foto'}</span>`;
+
+        const isConfirmingDelete = pendingDeleteMovementId === m.id;
+        const actionsHtml = isConfirmingDelete
+          ? `<div class="inline-flex items-center gap-1">
+               <button type="button" onclick="confirmDeleteMovement('${m.id}')"
+                 class="px-2 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-bold">
+                 Confirmar
+               </button>
+               <button type="button" onclick="cancelDeleteMovement()"
+                 class="px-2 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800 text-[11px] font-semibold">
+                 No
+               </button>
+             </div>`
+          : `<div class="inline-flex items-center gap-1">
+               <button type="button" onclick="openEditMovementModal('${m.id}')"
+                 class="p-1.5 rounded-lg text-blue-600 hover:bg-blue-50" title="Editar movimiento">
+                 <i class="fa-solid fa-pen"></i>
+               </button>
+               <button type="button" onclick="requestDeleteMovement('${m.id}')"
+                 class="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50" title="Eliminar movimiento">
+                 <i class="fa-solid fa-trash"></i>
+               </button>
+             </div>`;
+
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-50';
         tr.innerHTML = `
-          <td class="py-2.5 px-3 whitespace-nowrap text-xs text-slate-600">${m.fecha}</td>
-          <td class="py-2.5 px-3">
-            <span class="px-2 py-0.5 rounded-md text-[11px] font-bold ${isEntrada ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'}">
-              ${m.tipo}
-            </span>
+          <td class="py-2.5 px-3 whitespace-nowrap text-xs">
+            <p class="font-mono font-bold text-slate-800">${m.id}</p>
+            <p class="text-slate-500">${m.fecha}</p>
           </td>
-          <td class="py-2.5 px-3 text-xs font-medium text-slate-700">${m.almacen}</td>
-          <td class="py-2.5 px-3 text-xs text-slate-800">${m.rama} · <strong>${m.subRama}</strong></td>
+          <td class="py-2.5 px-3">
+            <span class="px-2 py-0.5 rounded-md text-[11px] font-bold ${badgeClass}">${m.tipo}</span>
+          </td>
+          <td class="py-2.5 px-3 text-xs">${provAlmText}</td>
+          <td class="py-2.5 px-3 text-xs text-slate-800">${destinoText}</td>
           <td class="py-2.5 px-3">
             <p class="font-semibold text-slate-900">${m.producto}</p>
-            <p class="text-[11px] font-mono text-slate-500">${m.codigo || 'Sin código'}</p>
+            <p class="text-[11px] font-mono text-slate-500">${m.codigo || 'Sin código de barras'}</p>
           </td>
           <td class="py-2.5 px-3 text-right font-bold">${Number(m.totalPiezas).toLocaleString('es-MX')}</td>
-          <td class="py-2.5 px-3 text-right font-semibold ${isEntrada ? 'text-emerald-700' : 'text-amber-800'}">${formatCurrency(m.costoTotal)}</td>
-          <td class="py-2.5 px-3 text-center text-xs text-slate-600">
-            ${m.fotoDataUrl
-              ? `<img src="${m.fotoDataUrl}" alt="${m.fotoNombre || 'Evidencia'}" class="w-10 h-10 rounded-lg object-cover inline-block border border-slate-300" />`
-              : `<span>${m.fotoNombre || '—'}</span>`
-            }
-            ${m.notas ? `<p class="text-[11px] text-slate-500 mt-0.5">${m.notas}</p>` : ''}
+          <td class="py-2.5 px-3 text-right font-semibold text-emerald-700">${formatCurrency(m.costoTotal)}</td>
+          <td class="py-2.5 px-3 text-center">
+            ${photoHtml}
+            ${m.notas ? `<p class="text-[11px] text-slate-500 mt-0.5 max-w-[160px] truncate mx-auto" title="${escapeAttr(m.notas)}">${m.notas}</p>` : ''}
           </td>
+          <td class="py-2.5 px-3 text-right whitespace-nowrap">${actionsHtml}</td>
         `;
         tbody.appendChild(tr);
       });
+    }
+
+    function escapeAttr(str) {
+      return String(str || '').replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+    }
+
+    function requestDeleteMovement(id) {
+      pendingDeleteMovementId = id;
+      renderBitacoraView();
+      showFeedback(`Confirma en la fila si deseas eliminar el movimiento ${id}.`, 'warn');
+    }
+
+    function cancelDeleteMovement() {
+      pendingDeleteMovementId = null;
+      renderBitacoraView();
+    }
+
+    function confirmDeleteMovement(id) {
+      movements = movements.filter((m) => m.id !== id);
+      pendingDeleteMovementId = null;
+      saveState();
+      renderBitacoraView();
+      showFeedback(`Movimiento ${id} eliminado correctamente.`, 'ok');
+    }
+
+    function syncEditModalTypeFields(tipo) {
+      const provWrap = document.getElementById('editProveedorWrap');
+      const destWrap = document.getElementById('editAlmacenDestinoWrap');
+      const subWrap = document.getElementById('editSubRamaWrap');
+
+      provWrap.classList.toggle('hidden', tipo !== 'ENTRADA');
+      destWrap.classList.toggle('hidden', tipo !== 'TRASPASO');
+      subWrap.classList.toggle('hidden', tipo === 'TRASPASO');
+    }
+
+    function updateEditFotoPreview() {
+      const box = document.getElementById('editFotoPreviewBox');
+      const img = document.getElementById('editFotoPreviewImg');
+      const lbl = document.getElementById('editFotoPreviewLabel');
+      if (editPhotoState.dataUrl) {
+        img.src = editPhotoState.dataUrl;
+        lbl.textContent = editPhotoState.name || 'evidencia.jpg';
+        box.classList.remove('hidden');
+      } else {
+        img.src = '';
+        lbl.textContent = '';
+        box.classList.add('hidden');
+      }
+    }
+
+    function openEditMovementModal(id) {
+      const mov = movements.find((m) => m.id === id);
+      if (!mov) return;
+
+      document.getElementById('editMovId').value = mov.id;
+      document.getElementById('editModalFolio').textContent = `(${mov.id})`;
+      document.getElementById('editMovFecha').value = mov.fecha;
+      document.getElementById('editMovTipo').value = mov.tipo;
+      document.getElementById('editMovAlmacen').value = mov.almacen || 'Almacén General';
+      document.getElementById('editMovProveedor').value = mov.proveedor || 'N/A';
+      document.getElementById('editMovAlmacenDestino').value = mov.almacenDestino || 'Bodega';
+      document.getElementById('editMovSubRama').value = mov.subRama || 'Habitaciones';
+      document.getElementById('editMovCodigo').value = mov.codigo || '';
+      document.getElementById('editMovProducto').value = mov.producto;
+      document.getElementById('editMovEmpaques').value = mov.empaques || 1;
+      document.getElementById('editMovPiezas').value = mov.totalPiezas || 1;
+      document.getElementById('editMovCosto').value = Number(mov.costoTotal || 0).toFixed(2);
+      document.getElementById('editMovNotas').value = mov.notas || '';
+      document.getElementById('editMovFotoInput').value = '';
+
+      editPhotoState = {
+        name: mov.fotoNombre || '',
+        dataUrl: mov.fotoDataUrl || ''
+      };
+      updateEditFotoPreview();
+      syncEditModalTypeFields(mov.tipo);
+
+      document.getElementById('editMovementModal').classList.remove('hidden');
+    }
+
+    function closeEditMovementModal() {
+      document.getElementById('editMovementModal').classList.add('hidden');
     }
 
     // =======================================================================
@@ -1421,7 +2258,9 @@
         'ID_Movimiento',
         'Fecha_Hora',
         'Tipo_Movimiento',
-        'Almacen_Origen_Destino',
+        'Proveedor',
+        'Almacen_Origen',
+        'Almacen_Destino',
         'Rama',
         'Sub_Rama_Punto_Venta',
         'Codigo_Barras_SKU',
@@ -1443,7 +2282,9 @@
           m.id,
           m.fecha,
           m.tipo,
+          m.proveedor || 'N/A',
           m.almacen,
+          m.almacenDestino || '',
           m.rama,
           m.subRama,
           m.codigo,
@@ -1468,7 +2309,7 @@
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
-      showFeedback('CSV exportado correctamente para importar en Google Sheets.', 'ok');
+      showFeedback('CSV exportado correctamente para Google Sheets.', 'ok');
     }
 
     // =======================================================================
@@ -1477,13 +2318,18 @@
     document.addEventListener('DOMContentLoaded', () => {
       loadState();
       populateSubRamaOptions('Hotel', 'Recepción');
+      populateProviderSelects();
       renderCatalogUI();
       updateCalculatedTotals();
 
-      // Pestañas de escritorio y móvil
+      // Navegación
       document.querySelectorAll('.nav-tab, .mobile-nav-tab').forEach((btn) => {
         btn.addEventListener('click', () => switchView(btn.dataset.view));
       });
+
+      document.getElementById('goProveedoresBtn').addEventListener('click', () => switchView('proveedores'));
+      document.getElementById('goCatalogoBtn').addEventListener('click', () => switchView('productos'));
+      document.getElementById('openFullCatalogBtn').addEventListener('click', () => switchView('productos'));
 
       // Filtro global de almacén
       document.getElementById('globalAlmacenFilter').addEventListener('change', (e) => {
@@ -1510,36 +2356,38 @@
         document.getElementById('feedbackBanner').classList.add('hidden');
       });
 
-      // Tipo movimiento ENTRADA / SALIDA
+      // Tipos de movimiento: ENTRADA, TRASPASO, SALIDA
       document.getElementById('btnTipoEntrada').addEventListener('click', () => setMovementType('ENTRADA'));
+      document.getElementById('btnTipoTraspaso').addEventListener('click', () => setMovementType('TRASPASO'));
       document.getElementById('btnTipoSalida').addEventListener('click', () => setMovementType('SALIDA'));
 
-      // Cambio de Rama
+      // Rama y Sub-rama
       document.getElementById('ramaSelect').addEventListener('change', (e) => {
         populateSubRamaOptions(e.target.value);
       });
 
-      // Selección desde catálogo desplegable
+      // Catálogo desplegable y búsqueda rápida
       document.getElementById('catalogoSelect').addEventListener('change', (e) => {
         const item = catalog.find((c) => c.id === e.target.value);
         if (item) fillFormFromCatalogItem(item);
       });
+      document.getElementById('quickCatalogSearch').addEventListener('input', renderCatalogUI);
 
-      // Detección al escribir o escanear con lector USB/Bluetooth en el campo de código
+      // Código de barras / SKU
       document.getElementById('codigoBarrasInput').addEventListener('input', (e) => {
         const matched = lookupBarcodeInCatalog(e.target.value);
         if (matched) {
           document.getElementById('productoNombreInput').value = matched.nombre;
           document.getElementById('piezasPorEmpaqueInput').value = matched.piezasPorEmpaque;
           document.getElementById('costoEmpaqueInput').value = Number(matched.costoEmpaque || 0).toFixed(2);
-          document.getElementById('ramaSelect').value = matched.rama;
-          populateSubRamaOptions(matched.rama, matched.subRama);
+          document.getElementById('ramaSelect').value = matched.rama || 'Hotel';
+          populateSubRamaOptions(matched.rama || 'Hotel', matched.subRama || '');
           updateCalculatedTotals();
           document.getElementById('barcodeMatchBadge').textContent = `Código reconocido: ${matched.nombre} (${matched.piezasPorEmpaque} pzas/emp).`;
         }
       });
 
-      // Cámara de escaneo
+      // Cámara escáner
       document.getElementById('toggleCameraScannerBtn').addEventListener('click', startCameraScanner);
       document.getElementById('stopCameraScannerBtn').addEventListener('click', stopCameraScanner);
 
@@ -1548,18 +2396,19 @@
         document.getElementById(id).addEventListener('input', updateCalculatedTotals);
       });
 
-      // Foto evidencia
-      document.getElementById('evidenciaFotoInput').addEventListener('change', (e) => {
+      // Foto evidencia en formulario nuevo (con compresión)
+      document.getElementById('evidenciaFotoInput').addEventListener('change', async (e) => {
         const file = e.target.files && e.target.files[0];
         if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-          currentPhoto = { name: file.name, dataUrl: ev.target.result };
-          document.getElementById('fotoPreviewImage').src = currentPhoto.dataUrl;
-          document.getElementById('fotoPreviewName').textContent = currentPhoto.name;
-          document.getElementById('fotoPreviewContainer').classList.remove('hidden');
-        };
-        reader.readAsDataURL(file);
+        const compressed = await compressImageFile(file);
+        currentPhoto = compressed;
+        document.getElementById('fotoPreviewImage').src = currentPhoto.dataUrl;
+        document.getElementById('fotoPreviewName').textContent = currentPhoto.name;
+        document.getElementById('fotoPreviewContainer').classList.remove('hidden');
+      });
+
+      document.getElementById('fotoPreviewImage').addEventListener('click', () => {
+        if (currentPhoto.dataUrl) openPhotoLightbox(currentPhoto.name, currentPhoto.dataUrl);
       });
 
       document.getElementById('removeFotoBtn').addEventListener('click', () => {
@@ -1573,20 +2422,22 @@
         document.getElementById('movementForm').reset();
         currentPhoto = { name: '', dataUrl: '' };
         document.getElementById('fotoPreviewContainer').classList.add('hidden');
-        document.getElementById('barcodeMatchBadge').textContent = 'Soporta pistola USB/Bluetooth, entrada manual o cámara en HTTPS.';
+        document.getElementById('barcodeMatchBadge').textContent = 'Puedes dejarlo en blanco si el producto no tiene código de barras.';
         populateSubRamaOptions('Hotel');
         setMovementType('ENTRADA');
         updateCalculatedTotals();
       });
 
-      // Guardar movimiento
+      // Guardar movimiento nuevo
       document.getElementById('movementForm').addEventListener('submit', (e) => {
         e.preventDefault();
         try {
           const tipo = document.getElementById('tipoMovimiento').value;
           const almacen = document.getElementById('almacenOrigen').value;
+          const almacenDestino = tipo === 'TRASPASO' ? document.getElementById('almacenDestinoSelect').value : '';
+          const proveedor = tipo === 'ENTRADA' ? (document.getElementById('proveedorSelect').value || 'Otros') : 'N/A';
           const rama = document.getElementById('ramaSelect').value;
-          const subRama = document.getElementById('subRamaSelect').value;
+          const subRama = tipo === 'TRASPASO' ? almacenDestino : document.getElementById('subRamaSelect').value;
           const codigo = document.getElementById('codigoBarrasInput').value.trim();
           const producto = document.getElementById('productoNombreInput').value.trim();
           const empaques = Math.max(1, parseInt(document.getElementById('cantidadEmpaquesInput').value, 10) || 1);
@@ -1599,11 +2450,15 @@
             return;
           }
 
+          if (tipo === 'TRASPASO' && almacen === almacenDestino) {
+            showFeedback('El almacén origen y el almacén destino deben ser distintos en un TRASPASO.', 'warn');
+            return;
+          }
+
           const totalPiezas = empaques * piezasPorEmpaque;
           const costoTotal = Number((empaques * costoEmpaque).toFixed(2));
 
-          // Validar stock disponible al registrar SALIDA / TRASPASO
-          if (tipo === 'SALIDA') {
+          if (tipo === 'SALIDA' || tipo === 'TRASPASO') {
             const rows = calculateStockRows(almacen);
             const matchRow = rows.find((r) => r.producto.toLowerCase() === producto.toLowerCase());
             const available = matchRow ? matchRow.piezas : 0;
@@ -1620,7 +2475,9 @@
             id: getNextSequentialMovementId(),
             fecha: nowTimestamp(),
             tipo,
+            proveedor,
             almacen,
+            almacenDestino,
             rama,
             subRama,
             codigo,
@@ -1639,8 +2496,9 @@
           saveState();
           enviarAGoogleSheets(entry);
 
+          const destinoLabel = tipo === 'TRASPASO' ? `→ ${almacenDestino}` : `→ ${rama} / ${subRama}`;
           showFeedback(
-            `${entry.id} · ${tipo} guardada (${totalPiezas} pzas · ${formatCurrency(costoTotal)}) en ${almacen} → ${rama} / ${subRama}.`,
+            `${entry.id} · ${tipo} guardada (${totalPiezas} pzas · ${formatCurrency(costoTotal)}) en ${almacen} ${destinoLabel}.`,
             'ok'
           );
 
@@ -1651,11 +2509,11 @@
           document.getElementById('fotoPreviewContainer').classList.add('hidden');
           updateCalculatedTotals();
         } catch (err) {
-          showFeedback('No se pudo guardar el movimiento. Verifica los datos ingresados.', 'error');
+          showFeedback('No se pudo guardar el movimiento. Verifica los datos.', 'error');
         }
       });
 
-      // Agregar nuevo artículo al catálogo
+      // Alta rápida desde panel lateral
       document.getElementById('addCatalogForm').addEventListener('submit', (e) => {
         e.preventDefault();
         const nombre = document.getElementById('newCatNombre').value.trim();
@@ -1667,7 +2525,7 @@
         const subRama = document.getElementById('newCatSubRama').value;
 
         if (!nombre) {
-          showFeedback('Ingresa un nombre de producto para agregarlo al catálogo.', 'error');
+          showFeedback('Ingresa un nombre de producto.', 'error');
           return;
         }
 
@@ -1688,24 +2546,166 @@
         renderCatalogUI();
         fillFormFromCatalogItem(newItem);
         document.getElementById('addCatalogForm').reset();
-        showFeedback(`Producto "${nombre}" agregado al catálogo de Hotel Templo.`, 'ok');
+        showFeedback(`Producto "${nombre}" dado de alta en el catálogo.`, 'ok');
       });
 
-      // Filtros de vistas secundarias y exportación CSV
+      // Formulario completo de catálogo (alta y edición)
+      document.getElementById('fullCatalogForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const editId = document.getElementById('editCatalogId').value;
+        const nombre = document.getElementById('catNombreInput').value.trim();
+        const codigo = document.getElementById('catCodigoInput').value.trim();
+        const codigoAlterno = document.getElementById('catAlternoInput').value.trim();
+        const piezasPorEmpaque = Math.max(1, parseInt(document.getElementById('catPiezasEmpInput').value, 10) || 1);
+        const costoEmpaque = Math.max(0, parseFloat(document.getElementById('catCostoEmpInput').value) || 0);
+        const stockMinimo = Math.max(0, parseInt(document.getElementById('catStockMinInput').value, 10) || 0);
+        const rama = document.getElementById('catRamaInput').value;
+        const subRama = document.getElementById('catSubRamaInput').value;
+
+        if (!nombre) {
+          showFeedback('El nombre del producto es obligatorio.', 'error');
+          return;
+        }
+
+        if (editId) {
+          const idx = catalog.findIndex((c) => c.id === editId);
+          if (idx !== -1) {
+            catalog[idx] = {
+              ...catalog[idx],
+              nombre,
+              codigo,
+              codigoAlterno,
+              piezasPorEmpaque,
+              costoEmpaque,
+              stockMinimo,
+              rama,
+              subRama
+            };
+            showFeedback(`Producto "${nombre}" actualizado.`, 'ok');
+          }
+        } else {
+          catalog.unshift({
+            id: `CAT-${Date.now().toString().slice(-6)}`,
+            nombre,
+            codigo,
+            codigoAlterno,
+            piezasPorEmpaque,
+            costoEmpaque,
+            stockMinimo,
+            rama,
+            subRama
+          });
+          showFeedback(`Producto "${nombre}" dado de alta en el catálogo.`, 'ok');
+        }
+
+        saveState();
+        resetFullCatalogForm();
+        renderCatalogUI();
+      });
+
+      document.getElementById('cancelEditCatalogBtn').addEventListener('click', resetFullCatalogForm);
+      document.getElementById('fullCatalogSearch').addEventListener('input', renderFullCatalogView);
+
+      // Proveedores
+      document.getElementById('addProveedorForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const nombre = document.getElementById('inputNuevoProveedor').value.trim();
+        const categoria = document.getElementById('inputCategoriaProveedor').value.trim() || 'General';
+        if (!nombre) return;
+
+        providers.push({
+          id: `PROV-${Date.now().toString().slice(-6)}`,
+          nombre,
+          categoria
+        });
+        saveState();
+        populateProviderSelects();
+        renderProvidersView();
+        e.target.reset();
+        showFeedback(`Proveedor "${nombre}" agregado.`, 'ok');
+      });
+
+      // Filtros de vistas y exportación CSV
       document.getElementById('stockFilterText').addEventListener('input', renderStockView);
       document.getElementById('posDetailSelect').addEventListener('change', renderSalesView);
       document.getElementById('bitacoraTipoFilter').addEventListener('change', renderBitacoraView);
+      document.getElementById('bitacoraProveedorFilter').addEventListener('change', renderBitacoraView);
       document.getElementById('exportCsvBtn').addEventListener('click', exportMovementsToCSV);
 
       document.getElementById('restoreDemoDataBtn').addEventListener('click', () => {
         catalog = [...DEFAULT_CATALOG];
         movements = [...DEFAULT_MOVEMENTS];
+        providers = [...DEFAULT_PROVIDERS];
+        pendingDeleteMovementId = null;
         saveState();
+        populateProviderSelects();
         renderCatalogUI();
         renderStockView();
         renderSalesView();
         renderBitacoraView();
         showFeedback('Datos iniciales de demostración restablecidos.', 'ok');
+      });
+
+      // Modal edición movimiento
+      document.getElementById('closeEditModalBtn').addEventListener('click', closeEditMovementModal);
+      document.getElementById('cancelEditModalBtn').addEventListener('click', closeEditMovementModal);
+      document.getElementById('editMovTipo').addEventListener('change', (e) => syncEditModalTypeFields(e.target.value));
+
+      document.getElementById('editMovFotoInput').addEventListener('change', async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        editPhotoState = await compressImageFile(file);
+        updateEditFotoPreview();
+      });
+
+      document.getElementById('editRemoveFotoBtn').addEventListener('click', () => {
+        editPhotoState = { name: '', dataUrl: '' };
+        document.getElementById('editMovFotoInput').value = '';
+        updateEditFotoPreview();
+      });
+
+      document.getElementById('editMovementForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('editMovId').value;
+        const idx = movements.findIndex((m) => m.id === id);
+        if (idx === -1) return;
+
+        const tipo = document.getElementById('editMovTipo').value;
+        const almacen = document.getElementById('editMovAlmacen').value;
+        const almacenDestino = tipo === 'TRASPASO' ? document.getElementById('editMovAlmacenDestino').value : '';
+        const proveedor = tipo === 'ENTRADA' ? (document.getElementById('editMovProveedor').value || 'N/A') : 'N/A';
+        const subRama = tipo === 'TRASPASO' ? almacenDestino : document.getElementById('editMovSubRama').value;
+        const rama = ['Habitaciones', 'Lavandería', 'Recepción'].includes(subRama) ? 'Hotel' : 'Restaurante';
+
+        movements[idx] = {
+          ...movements[idx],
+          fecha: document.getElementById('editMovFecha').value.trim(),
+          tipo,
+          almacen,
+          almacenDestino,
+          proveedor,
+          subRama,
+          rama,
+          codigo: document.getElementById('editMovCodigo').value.trim(),
+          producto: document.getElementById('editMovProducto').value.trim(),
+          empaques: Math.max(1, parseInt(document.getElementById('editMovEmpaques').value, 10) || 1),
+          totalPiezas: Math.max(1, parseInt(document.getElementById('editMovPiezas').value, 10) || 1),
+          costoTotal: Math.max(0, parseFloat(document.getElementById('editMovCosto').value) || 0),
+          fotoNombre: editPhotoState.name || (editPhotoState.dataUrl ? 'evidencia.jpg' : ''),
+          fotoDataUrl: editPhotoState.dataUrl || '',
+          notas: document.getElementById('editMovNotas').value.trim()
+        };
+
+        saveState();
+        closeEditMovementModal();
+        renderBitacoraView();
+        showFeedback(`Movimiento ${id} actualizado.`, 'ok');
+      });
+
+      // Visor ampliado de foto
+      document.getElementById('closeLightboxBtn').addEventListener('click', closePhotoLightbox);
+      document.getElementById('photoLightboxModal').addEventListener('click', (e) => {
+        if (e.target.id === 'photoLightboxModal') closePhotoLightbox();
       });
     });
   </script>
