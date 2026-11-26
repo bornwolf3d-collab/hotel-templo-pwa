@@ -49,9 +49,7 @@
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col">
 
-  <!-- ===================================================================== -->
-  <!-- ENCABEZADO SUPERIOR Y NAVEGACIÓN PRINCIPAL                             -->
-  <!-- ===================================================================== -->
+  <!-- ENCABEZADO SUPERIOR Y NAVEGACIÓN PRINCIPAL -->
   <header class="bg-slate-900 text-white sticky top-0 z-30 shadow-md border-b border-slate-800">
     <div class="max-w-7xl mx-auto px-4 py-3.5 sm:px-6">
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
@@ -1413,12 +1411,19 @@
       if (!APPS_SCRIPT_URL) return;
       setSheetsSyncStatus('Enviando Catálogo...', 'syncing');
       try {
+        const cleanAction =
+          action === 'delete' || action === 'catalog_delete'
+            ? 'catalog_delete'
+            : action === 'update' || action === 'catalog_update'
+            ? 'catalog_update'
+            : 'catalog_create';
+
         const payload = {
-          action: action === 'update' ? 'catalog_update' : 'catalog_create',
+          action: cleanAction,
           id: catItem.codigo || catItem.id,
-          codigo: catItem.codigo || catItem.id,
-          sku: catItem.codigo || catItem.id,
-          nombre: catItem.nombre,
+          codigo: catItem.codigo || catItem.id || '',
+          sku: catItem.codigo || catItem.id || '',
+          nombre: catItem.nombre || '',
           rama: catItem.rama || 'Hotel',
           subRama: catItem.subRama || 'Habitaciones',
           presentacion: 'Pieza',
@@ -1812,8 +1817,9 @@
       if (!item) return;
       catalog = catalog.filter((c) => c.id !== id);
       saveState();
+      sincronizarCatalogoSheets('delete', item);
       renderCatalogUI();
-      showFeedback(`Producto "${item.nombre}" eliminado del catálogo.`, 'ok');
+      showFeedback(`Producto "${item.nombre}" eliminado del catálogo local y Google Sheets.`, 'ok');
     }
 
     function populateProviderSelects() {
