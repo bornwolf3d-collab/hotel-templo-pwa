@@ -64,7 +64,7 @@
                 Hotel Templo · Almacén y Puntos de Venta
               </h1>
               <p class="text-[11px] sm:text-xs text-slate-300 truncate">
-                Donceles 88 · 16 Habitaciones · Bodega, Almacén y Puntos de Venta
+                Donceles 88 · 16 Habitaciones · Almacén General, Bodega y Puntos de Venta
               </p>
             </div>
           </div>
@@ -95,10 +95,9 @@
             </label>
             <select id="globalAlmacenFilter"
               class="w-full sm:w-auto rounded-xl bg-slate-800 text-white border border-slate-600 px-3 py-2 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-400">
-              <option value="TODOS">Todos (General + Bodega + Almacén)</option>
+              <option value="TODOS">Todos (General + Bodega)</option>
               <option value="Almacén General">Almacén General</option>
               <option value="Bodega">Bodega</option>
-              <option value="Almacén">Almacén</option>
             </select>
           </div>
 
@@ -209,7 +208,6 @@
                   class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500">
                   <option value="Almacén General">Almacén General</option>
                   <option value="Bodega">Bodega</option>
-                  <option value="Almacén">Almacén</option>
                 </select>
                 <p id="almacenOrigenHelp" class="text-[11px] text-slate-500 mt-1">
                   En ENTRADA ingresa mercancía aquí; en TRASPASO o SALIDA se descuenta de este almacén.
@@ -241,7 +239,6 @@
               <select id="almacenDestinoSelect"
                 class="w-full rounded-xl border border-amber-300 bg-white px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500">
                 <option value="Bodega">Bodega</option>
-                <option value="Almacén">Almacén</option>
                 <option value="Almacén General">Almacén General</option>
               </select>
               <p class="text-[11px] text-amber-900 mt-1">
@@ -755,7 +752,7 @@
         </div>
 
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
-          <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Bodega + Almacén</p>
+          <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Bodega</p>
           <p id="kpiStockBodegaPzas" class="text-2xl font-extrabold text-slate-900 mt-1">0 unidades</p>
           <p id="kpiStockBodegaVal" class="text-xs font-semibold text-emerald-700 mt-0.5">Valor: $0.00</p>
         </div>
@@ -790,6 +787,11 @@
             <input type="search" id="stockFilterText"
               placeholder="Buscar producto, SKU o código..."
               class="w-full sm:w-64 rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" />
+            <button type="button" id="exportStockCsvBtn"
+              class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition flex items-center gap-1.5">
+              <i class="fa-solid fa-file-csv"></i>
+              <span>Exportar CSV</span>
+            </button>
           </div>
         </div>
 
@@ -984,7 +986,6 @@
             <select id="editMovAlmacen" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white">
               <option value="Almacén General">Almacén General</option>
               <option value="Bodega">Bodega</option>
-              <option value="Almacén">Almacén</option>
             </select>
           </div>
         </div>
@@ -998,7 +999,6 @@
             <label for="editMovAlmacenDestino" class="block text-xs font-semibold text-slate-700 mb-1">Almacén Destino</label>
             <select id="editMovAlmacenDestino" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white">
               <option value="Bodega">Bodega</option>
-              <option value="Almacén">Almacén</option>
               <option value="Almacén General">Almacén General</option>
             </select>
           </div>
@@ -1294,13 +1294,26 @@
       }
     }
 
+    function normalizeWarehouseName(name) {
+      const clean = String(name || '').trim();
+      if (!clean) return 'Almacén General';
+      if (clean.toLowerCase() === 'almacén' || clean.toLowerCase() === 'almacen') return 'Bodega';
+      if (clean.toLowerCase() === 'almacén general' || clean.toLowerCase() === 'almacen general') return 'Almacén General';
+      if (clean.toLowerCase() === 'bodega') return 'Bodega';
+      return clean;
+    }
+
     function loadState() {
       try {
         const rawCat = localStorage.getItem(STORAGE_KEYS.CATALOG);
         const rawMov = localStorage.getItem(STORAGE_KEYS.MOVEMENTS);
         const rawProv = localStorage.getItem(STORAGE_KEYS.PROVIDERS);
         catalog = rawCat ? JSON.parse(rawCat) : [...DEFAULT_CATALOG];
-        movements = rawMov ? JSON.parse(rawMov) : [...DEFAULT_MOVEMENTS];
+        movements = rawMov ? JSON.parse(rawMov).map((m) => ({
+          ...m,
+          almacen: normalizeWarehouseName(m.almacen),
+          almacenDestino: m.almacenDestino ? normalizeWarehouseName(m.almacenDestino) : ''
+        })) : [...DEFAULT_MOVEMENTS];
         providers = rawProv ? JSON.parse(rawProv) : [...DEFAULT_PROVIDERS];
       } catch (err) {
         catalog = [...DEFAULT_CATALOG];
@@ -1373,8 +1386,8 @@
             fecha: String(m.fecha || m.fecha_hora || nowTimestamp()).trim(),
             tipo: String(m.tipo || m.tipo_movimiento || 'ENTRADA').trim().toUpperCase(),
             proveedor: String(m.proveedor || 'N/A').trim(),
-            almacen: String(m.almacen || m.almacen_origen || 'Almacén General').trim(),
-            almacenDestino: String(m.almacenDestino || m.almacen_destino || '').trim(),
+            almacen: normalizeWarehouseName(m.almacen || m.almacen_origen || 'Almacén General'),
+            almacenDestino: (m.almacenDestino || m.almacen_destino) ? normalizeWarehouseName(m.almacenDestino || m.almacen_destino) : '',
             rama: String(m.rama || 'Hotel').trim(),
             subRama: String(m.subRama || m.sub_rama || 'Recepción').trim(),
             codigo: String(m.codigo || m.codigo_barras || '').trim(),
@@ -2208,8 +2221,8 @@
       const map = new Map();
 
       const warehousesToCheck = almacenFilter === 'TODOS'
-        ? ['Almacén General', 'Bodega', 'Almacén']
-        : [almacenFilter];
+        ? ['Almacén General', 'Bodega']
+        : [normalizeWarehouseName(almacenFilter)];
 
       catalog.forEach((cat) => {
         warehousesToCheck.forEach((alm) => {
@@ -2296,12 +2309,11 @@
 
       const allGen = calculateStockRows('Almacén General');
       const allBod = calculateStockRows('Bodega');
-      const allAlm = calculateStockRows('Almacén');
 
       const genPzas = allGen.reduce((acc, r) => acc + r.piezas, 0);
       const genVal = allGen.reduce((acc, r) => acc + r.valor, 0);
-      const bodPzas = allBod.reduce((acc, r) => acc + r.piezas, 0) + allAlm.reduce((acc, r) => acc + r.piezas, 0);
-      const bodVal = allBod.reduce((acc, r) => acc + r.valor, 0) + allAlm.reduce((acc, r) => acc + r.valor, 0);
+      const bodPzas = allBod.reduce((acc, r) => acc + r.piezas, 0);
+      const bodVal = allBod.reduce((acc, r) => acc + r.valor, 0);
 
       document.getElementById('kpiStockGeneralPzas').textContent = `${genPzas.toLocaleString('es-MX', { maximumFractionDigits: 1 })} unidades`;
       document.getElementById('kpiStockGeneralVal').textContent = `Valor: ${formatCurrency(genVal)}`;
@@ -2678,6 +2690,73 @@
 
     function closeEditMovementModal() {
       document.getElementById('editMovementModal').classList.add('hidden');
+    }
+
+    function getFilteredStockRows() {
+      const globalAlm = document.getElementById('globalAlmacenFilter').value;
+      const search = (document.getElementById('stockFilterText').value || '').trim().toLowerCase();
+      const statusFilter = document.getElementById('stockStatusFilter').value;
+      const baseRows = calculateStockRows(globalAlm);
+
+      return baseRows.filter((r) => {
+        if (statusFilter === 'ALERTA' && !r.isAlert) return false;
+        if (statusFilter === 'OPTIMO' && r.piezas <= 0) return false;
+        if (!search) return true;
+        return (
+          r.producto.toLowerCase().includes(search) ||
+          (r.codigo || '').toLowerCase().includes(search) ||
+          r.almacen.toLowerCase().includes(search)
+        );
+      });
+    }
+
+    function exportStockToCSV() {
+      const rows = getFilteredStockRows();
+      const headers = [
+        'Producto',
+        'Codigo_SKU',
+        'Almacen',
+        'Unidad_Compra',
+        'Envases_Galones',
+        'Unidad_Salida',
+        'Existencia_Salida',
+        'Stock_Minimo',
+        'Estado',
+        'Valor_MXN'
+      ];
+      const escapeCsv = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+      const csvLines = [headers.map(escapeCsv).join(',')];
+
+      rows.forEach((r) => {
+        let estado = 'Optimo';
+        if (r.piezas === 0) estado = 'Sin Stock';
+        else if (r.stockMinimo > 0 && r.piezas <= r.stockMinimo) estado = 'Reabastecer';
+
+        csvLines.push([
+          r.producto,
+          r.codigo || '',
+          r.almacen,
+          r.unidadMedida || 'Pieza',
+          Number(r.empaques || 0).toFixed(2),
+          r.unidadSalida || 'Pieza',
+          Number(r.piezas || 0).toFixed(2),
+          r.stockMinimo || 0,
+          estado,
+          Number(r.valor || 0).toFixed(2)
+        ].map(escapeCsv).join(','));
+      });
+
+      const blob = new Blob(['\uFEFF' + csvLines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'Hotel_Templo_Stock_Por_Almacen.csv';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      showFeedback(`Reporte de stock exportado (${rows.length} filas).`, 'ok');
     }
 
     function exportMovementsToCSV() {
@@ -3142,6 +3221,7 @@
       document.getElementById('bitacoraProveedorFilter').addEventListener('change', renderBitacoraView);
       document.getElementById('bitacoraSearchInput').addEventListener('input', renderBitacoraView);
       document.getElementById('exportCsvBtn').addEventListener('click', exportMovementsToCSV);
+      document.getElementById('exportStockCsvBtn').addEventListener('click', exportStockToCSV);
 
       document.getElementById('restoreDemoDataBtn').addEventListener('click', () => {
         catalog = [...DEFAULT_CATALOG];
