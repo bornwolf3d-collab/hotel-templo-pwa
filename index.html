@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#0f172a" />
   <title>Hotel Templo · Almacén y Puntos de Venta</title>
 
-  <!-- Manifest PWA embebido vía Data URI para soporte de instalación en pantalla de inicio -->
+  <!-- Manifest PWA embebido vía Data URI -->
   <link id="pwaManifestLink" rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Hotel%20Templo%20%E2%80%93%20Almac%C3%A9n%20y%20Puntos%20de%20Venta%22%2C%22short_name%22%3A%22Hotel%20Templo%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230f172a%22%2C%22theme_color%22%3A%22%230f172a%22%2C%22orientation%22%3A%22portrait-primary%22%7D" />
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -32,14 +32,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <style>
-    /* Tipografía base y prevención de desbordamiento horizontal en móviles */
     html, body {
       font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       max-width: 100%;
       overflow-x: hidden;
     }
-
-    /* Scrollbar sutil para tablas en escritorio */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -58,7 +55,7 @@
   <header class="bg-slate-900 text-white sticky top-0 z-30 shadow-md border-b border-slate-800">
     <div class="max-w-7xl mx-auto px-4 py-3.5 sm:px-6">
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-        <!-- Identidad del hotel -->
+        <!-- Identidad -->
         <div class="flex items-center justify-between gap-3">
           <div class="flex items-center gap-3 min-w-0">
             <div class="w-10 h-10 rounded-xl bg-amber-500 text-slate-950 font-extrabold flex items-center justify-center shrink-0 shadow">
@@ -80,7 +77,7 @@
           </button>
         </div>
 
-        <!-- Selector global de Almacén + sincronización Sheets + Instalar -->
+        <!-- Selector global + Sincronización -->
         <div class="flex flex-wrap items-center gap-2 sm:gap-3">
           <span id="sheetsSyncBadge"
             class="px-2.5 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-[11px] font-semibold text-slate-300 flex items-center gap-1.5">
@@ -114,7 +111,7 @@
         </div>
       </div>
 
-      <!-- Pestañas de navegación en tablet y escritorio -->
+      <!-- Pestañas -->
       <nav aria-label="Navegación principal" class="hidden sm:flex flex-wrap gap-2 mt-3.5 pt-3 border-t border-slate-800">
         <button type="button" data-view="registrar"
           class="nav-tab px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-amber-500 text-slate-950">
@@ -144,9 +141,7 @@
     </div>
   </header>
 
-  <!-- ===================================================================== -->
-  <!-- BANNER DE ESTADO / MENSAJES (SIN ALERT NI CONFIRM)                     -->
-  <!-- ===================================================================== -->
+  <!-- BANNER DE MENSAJES -->
   <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 mt-3">
     <div id="feedbackBanner" role="status"
       class="hidden rounded-xl px-4 py-3 text-xs sm:text-sm font-medium border flex items-center justify-between gap-3 shadow-sm">
@@ -158,18 +153,14 @@
     </div>
   </div>
 
-  <!-- ===================================================================== -->
-  <!-- CONTENIDO PRINCIPAL DE VISTAS                                         -->
-  <!-- ===================================================================== -->
+  <!-- CONTENIDO PRINCIPAL -->
   <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 pt-4 pb-24 sm:pb-12 flex-1 space-y-6">
 
-    <!-- =================================================================== -->
-    <!-- VISTA 1: REGISTRAR MOVIMIENTO (ENTRADA / TRASPASO / SALIDA)         -->
-    <!-- =================================================================== -->
+    <!-- VISTA 1: REGISTRAR MOVIMIENTO -->
     <section id="view-registrar" class="space-y-5">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
 
-        <!-- Formulario principal de Entrada / Traspaso / Salida -->
+        <!-- Formulario principal -->
         <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6">
           <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-4 border-b border-slate-100">
             <div>
@@ -191,7 +182,6 @@
           </div>
 
           <form id="movementForm" class="space-y-4">
-            <!-- Tipo de Movimiento segregado en 3 botones: ENTRADA, TRASPASO, SALIDA -->
             <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
               <div class="sm:col-span-7">
                 <label class="block text-xs font-semibold text-slate-700 mb-1.5">Tipo de Movimiento *</label>
@@ -229,7 +219,7 @@
               </div>
             </div>
 
-            <!-- Proveedor (solo visible en ENTRADA) -->
+            <!-- Proveedor (ENTRADA) -->
             <div id="groupProveedorEntrada" class="p-3.5 rounded-xl bg-emerald-50/60 border border-emerald-200">
               <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
                 <label for="proveedorSelect" class="block text-xs font-semibold text-emerald-950">
@@ -245,7 +235,7 @@
               </select>
             </div>
 
-            <!-- Almacén Destino (solo visible en TRASPASO) -->
+            <!-- Almacén Destino (TRASPASO) -->
             <div id="groupAlmacenDestino" class="hidden p-3.5 rounded-xl bg-amber-50/80 border border-amber-200">
               <label for="almacenDestinoSelect" class="block text-xs font-semibold text-amber-950 mb-1.5">
                 Almacén Destino del Traspaso *
@@ -257,11 +247,11 @@
                 <option value="Almacén General">Almacén General</option>
               </select>
               <p class="text-[11px] text-amber-900 mt-1">
-                Movimiento físico interno entre almacenes (no se contabiliza como salida a punto de venta).
+                Movimiento físico interno entre almacenes.
               </p>
             </div>
 
-            <!-- Rama Principal y Sub-rama / Punto de Venta (principal en SALIDA, referencia en ENTRADA) -->
+            <!-- Rama / Sub-rama -->
             <div id="groupRamaSubRama" class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-3.5 rounded-xl bg-slate-50 border border-slate-200">
               <div>
                 <label for="ramaSelect" class="block text-xs font-semibold text-slate-700 mb-1.5">
@@ -287,7 +277,7 @@
               </div>
             </div>
 
-            <!-- Selector rápido desde Catálogo de Hotel Templo + botón de alta -->
+            <!-- Selector Catálogo -->
             <div>
               <div class="flex items-center justify-between gap-2 mb-1.5">
                 <label for="catalogoSelect" class="block text-xs font-semibold text-slate-700">
@@ -303,15 +293,15 @@
               </select>
             </div>
 
-            <!-- Código de Barras / SKU + Escáner Cámara / Lector USB-Bluetooth -->
+            <!-- Código + Escáner -->
             <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
               <div class="sm:col-span-6">
                 <label for="codigoBarrasInput" class="block text-xs font-semibold text-slate-700 mb-1.5">
-                  Código de Barras / SKU (opcional si no tiene código)
+                  Código de Barras / SKU (opcional)
                 </label>
                 <div class="flex gap-2">
                   <input type="text" id="codigoBarrasInput"
-                    placeholder="Escanea o escribe código (opcional)..."
+                    placeholder="Escanea o escribe código..."
                     class="flex-1 min-w-0 rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500" />
                   <button type="button" id="toggleCameraScannerBtn"
                     class="shrink-0 px-3 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition flex items-center gap-1.5">
@@ -320,7 +310,7 @@
                   </button>
                 </div>
                 <p id="barcodeMatchBadge" class="text-[11px] font-medium text-slate-500 mt-1">
-                  Puedes dejarlo en blanco si el producto no tiene código de barras.
+                  Puedes dejarlo en blanco si el producto no tiene código.
                 </p>
               </div>
 
@@ -329,12 +319,12 @@
                   Producto / Insumo *
                 </label>
                 <input type="text" id="productoNombreInput" required
-                  placeholder="Ej. Jumex Único Fresco Naranja 960ml o Jitomate Saladette"
+                  placeholder="Ej. Jumex Único Fresco Naranja 960ml"
                   class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500" />
               </div>
             </div>
 
-            <!-- Panel de Cámara en vivo para lectura de códigos de barras (HTTPS) -->
+            <!-- Panel Cámara Scanner -->
             <div id="cameraScannerPanel" class="hidden rounded-2xl border border-slate-300 bg-slate-950 text-white p-3.5 space-y-2.5">
               <div class="flex items-center justify-between">
                 <span class="text-xs font-semibold text-amber-300">
@@ -354,7 +344,7 @@
               </p>
             </div>
 
-            <!-- Cantidades, Empaque y Costo -->
+            <!-- Cantidades -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div>
                 <label for="cantidadEmpaquesInput" class="block text-xs font-semibold text-slate-700 mb-1">
@@ -399,18 +389,18 @@
               </div>
             </div>
 
-            <!-- Evidencia Fotográfica + Notas -->
+            <!-- Evidencia & Notas -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label for="evidenciaFotoInput" class="block text-xs font-semibold text-slate-700 mb-1.5">
-                  Foto de Evidencia (se optimiza y guarda en bitácora)
+                  Foto de Evidencia
                 </label>
                 <input type="file" id="evidenciaFotoInput" accept="image/*" capture="environment"
                   class="block w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-900 file:text-white hover:file:bg-slate-800 cursor-pointer" />
 
                 <div id="fotoPreviewContainer"
                   class="hidden mt-2.5 flex items-center gap-3 p-2 rounded-xl bg-slate-50 border border-slate-200">
-                  <img id="fotoPreviewImage" src="" alt="Vista previa de evidencia"
+                  <img id="fotoPreviewImage" src="" alt="Vista previa"
                     class="w-16 h-16 rounded-lg object-cover border border-slate-300 shrink-0 cursor-pointer" />
                   <div class="min-w-0 flex-1">
                     <p id="fotoPreviewName" class="text-xs font-semibold text-slate-800 truncate"></p>
@@ -427,12 +417,12 @@
                   Notas / Lote / Referencia
                 </label>
                 <textarea id="notasInput" rows="2"
-                  placeholder="Ej. Lote, caducidad, vale firmado o detalle de entrega..."
+                  placeholder="Ej. Lote, caducidad, vale firmado..."
                   class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500"></textarea>
               </div>
             </div>
 
-            <!-- Botones de acción -->
+            <!-- Botones -->
             <div class="flex flex-col sm:flex-row gap-3 pt-2">
               <button type="submit" id="submitMovementBtn"
                 class="flex-1 py-3 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm transition">
@@ -446,14 +436,14 @@
           </form>
         </div>
 
-        <!-- Panel lateral: Alta rápida y selección de productos existentes -->
+        <!-- Panel lateral: Alta rápida -->
         <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 flex flex-col justify-between space-y-5">
           <div>
             <div class="flex items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-100">
               <div>
                 <h3 class="text-base font-bold text-slate-900">Productos Existentes</h3>
                 <p class="text-xs text-slate-500">
-                  Toca un producto (con o sin código de barras) para cargarlo al movimiento.
+                  Toca un producto para cargarlo al movimiento.
                 </p>
               </div>
               <span id="catalogCountBadge"
@@ -469,7 +459,7 @@
             <div id="quickCatalogList" class="space-y-2 max-h-64 overflow-y-auto pr-1"></div>
           </div>
 
-          <!-- Formulario compacto para dar de alta producto existente o nuevo -->
+          <!-- Formulario compacto -->
           <form id="addCatalogForm" class="pt-4 border-t border-slate-200 space-y-2.5">
             <div class="flex items-center justify-between">
               <p class="text-xs font-bold text-slate-800 uppercase tracking-wider">
@@ -482,8 +472,14 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <input type="text" id="newCatNombre" placeholder="Nombre del producto *"
                 class="rounded-xl border border-slate-300 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500" />
-              <input type="text" id="newCatCodigo" placeholder="Código / SKU (opcional)"
-                class="rounded-xl border border-slate-300 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500" />
+              <div class="flex gap-1.5">
+                <input type="text" id="newCatCodigo" placeholder="Código / SKU"
+                  class="flex-1 min-w-0 rounded-xl border border-slate-300 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500" />
+                <button type="button" id="btnScanQuickCat" title="Escanear con Cámara"
+                  class="px-2.5 py-1.5 rounded-xl bg-slate-900 text-amber-400 text-xs hover:bg-slate-800">
+                  <i class="fa-solid fa-camera"></i>
+                </button>
+              </div>
             </div>
             <div class="grid grid-cols-3 gap-2">
               <div>
@@ -526,12 +522,9 @@
       </div>
     </section>
 
-    <!-- =================================================================== -->
-    <!-- VISTA 2: CATÁLOGO DE PRODUCTOS EXISTENTES (ALTA, EDICIÓN, ELIMINAR) -->
-    <!-- =================================================================== -->
+    <!-- VISTA 2: CATÁLOGO DE PRODUCTOS -->
     <section id="view-productos" class="hidden space-y-5">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        <!-- Formulario completo de alta o edición de producto -->
         <div class="lg:col-span-4 bg-white rounded-2xl border border-slate-200 shadow-sm p-5 h-fit">
           <div class="flex items-center justify-between mb-3">
             <h2 id="catalogFormTitle" class="text-base font-bold text-slate-900">Alta de Producto Existente</h2>
@@ -540,7 +533,7 @@
             </button>
           </div>
           <p class="text-xs text-slate-500 mb-4">
-            Da de alta productos con código de barras, con SKU interno o sin código de barras.
+            Da de alta o actualiza productos. Escanea el código con la cámara.
           </p>
 
           <form id="fullCatalogForm" class="space-y-3">
@@ -553,8 +546,14 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label for="catCodigoInput" class="block text-xs font-semibold text-slate-700 mb-1">Código de Barras / SKU</label>
-                <input type="text" id="catCodigoInput" placeholder="Opcional (vacío si no tiene)"
-                  class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+                <div class="flex gap-1.5">
+                  <input type="text" id="catCodigoInput" placeholder="Opcional"
+                    class="w-full min-w-0 rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+                  <button type="button" id="btnScanFullCat" title="Escanear con Cámara"
+                    class="px-3 py-2 rounded-xl bg-slate-900 text-amber-400 text-xs font-bold hover:bg-slate-800">
+                    <i class="fa-solid fa-camera"></i>
+                  </button>
+                </div>
               </div>
               <div>
                 <label for="catAlternoInput" class="block text-xs font-semibold text-slate-700 mb-1">Código Alterno / Dual</label>
@@ -606,7 +605,6 @@
           </form>
         </div>
 
-        <!-- Tabla de productos existentes -->
         <div class="lg:col-span-8 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
           <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
             <div>
@@ -636,9 +634,7 @@
       </div>
     </section>
 
-    <!-- =================================================================== -->
-    <!-- VISTA 3: GESTIÓN DE PROVEEDORES                                     -->
-    <!-- =================================================================== -->
+    <!-- VISTA 3: PROVEEDORES -->
     <section id="view-proveedores" class="hidden space-y-5">
       <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
         <div class="md:col-span-5 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm h-fit">
@@ -651,7 +647,7 @@
               <label for="inputNuevoProveedor" class="block text-xs font-semibold uppercase text-slate-600 mb-1">
                 Nombre del Proveedor *
               </label>
-              <input type="text" id="inputNuevoProveedor" required placeholder="Ej. Sam's Club, Aurrera, Walmart, Oaxaqueños"
+              <input type="text" id="inputNuevoProveedor" required placeholder="Ej. Sam's Club, Aurrera, Walmart..."
                 class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-amber-500" />
             </div>
             <div>
@@ -690,9 +686,7 @@
       </div>
     </section>
 
-    <!-- =================================================================== -->
-    <!-- VISTA 4: STOCK POR ALMACÉN                                          -->
-    <!-- =================================================================== -->
+    <!-- VISTA 4: STOCK POR ALMACÉN -->
     <section id="view-almacenes" class="hidden space-y-5">
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
@@ -724,7 +718,7 @@
           <div>
             <h2 class="text-base sm:text-lg font-bold text-slate-900">Existencias por Almacén</h2>
             <p class="text-xs text-slate-500">
-              Calculado en tiempo real según ENTRADAS, TRASPASOS y SALIDAS.
+              Calculado según ENTRADAS, TRASPASOS y SALIDAS.
             </p>
           </div>
           <div class="flex flex-wrap items-center gap-2">
@@ -760,16 +754,14 @@
       </div>
     </section>
 
-    <!-- =================================================================== -->
-    <!-- VISTA 5: VENTAS / SALIDAS POR PUNTO DE VENTA                        -->
-    <!-- =================================================================== -->
+    <!-- VISTA 5: VENTAS -->
     <section id="view-ventas" class="hidden space-y-5">
       <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
           <div>
             <h2 class="text-base sm:text-lg font-bold text-slate-900">Salidas / Ventas por Punto de Venta</h2>
             <p class="text-xs text-slate-500">
-              Rama Hotel (Habitaciones, Lavandería, Recepción) y Rama Restaurante (Piso, Barra, Cocina).
+              Rama Hotel (Habitaciones, Lavandería, Recepción) y Restaurante (Piso, Barra, Cocina).
             </p>
           </div>
 
@@ -785,7 +777,6 @@
           </select>
         </div>
 
-        <!-- Resumen rápido por Rama -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
           <div class="rounded-2xl border border-sky-200 bg-sky-50/70 p-4 flex items-center justify-between">
             <div>
@@ -832,9 +823,7 @@
       </div>
     </section>
 
-    <!-- =================================================================== -->
-    <!-- VISTA 6: BITÁCORA DE MOVIMIENTOS (FILTROS, EDITAR, ELIMINAR, CSV)   -->
-    <!-- =================================================================== -->
+    <!-- VISTA 6: BITÁCORA DE MOVIMIENTOS -->
     <section id="view-bitacora" class="hidden space-y-5">
       <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
@@ -846,12 +835,12 @@
               </span>
             </div>
             <p class="text-xs text-slate-500">
-              Filtra por folio, producto, ENTRADA, TRASPASO, SALIDA o proveedor; sincroniza edits y bajas por folio con Google Sheets.
+              Filtra por folio, producto o proveedor; cambios sincronizados con Google Sheets.
             </p>
           </div>
 
           <div class="flex flex-wrap items-center gap-2">
-            <input type="search" id="bitacoraSearchInput" placeholder="Buscar folio MOV-2026, producto..."
+            <input type="search" id="bitacoraSearchInput" placeholder="Buscar folio, producto..."
               class="rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-800 w-48" />
 
             <select id="bitacoraTipoFilter"
@@ -902,9 +891,7 @@
 
   </main>
 
-  <!-- ===================================================================== -->
-  <!-- MODAL PARA EDITAR MOVIMIENTO (CON FOTO Y CAMPOS POR TIPO)             -->
-  <!-- ===================================================================== -->
+  <!-- MODAL PARA EDITAR MOVIMIENTO -->
   <div id="editMovementModal" class="hidden fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden border border-slate-200 my-auto">
       <div class="bg-slate-900 text-white px-5 py-4 flex items-center justify-between">
@@ -995,11 +982,10 @@
           </div>
         </div>
 
-        <!-- Foto en edición -->
         <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <label for="editMovFotoInput" class="text-xs font-semibold text-slate-700">
-              Foto de Evidencia (reemplazar o agregar)
+              Foto de Evidencia
             </label>
             <button type="button" id="editRemoveFotoBtn" class="text-xs font-bold text-rose-600 hover:underline">
               Eliminar foto actual
@@ -1008,7 +994,7 @@
           <input type="file" id="editMovFotoInput" accept="image/*" capture="environment"
             class="block w-full text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-900 file:text-white" />
           <div id="editFotoPreviewBox" class="hidden flex items-center gap-3 pt-1">
-            <img id="editFotoPreviewImg" src="" alt="Evidencia en edición"
+            <img id="editFotoPreviewImg" src="" alt="Evidencia"
               class="w-16 h-16 rounded-lg object-cover border border-slate-300" />
             <span id="editFotoPreviewLabel" class="text-xs text-slate-600 truncate"></span>
           </div>
@@ -1033,9 +1019,7 @@
     </div>
   </div>
 
-  <!-- ===================================================================== -->
-  <!-- VISOR DE FOTO AMPLIADA                                                -->
-  <!-- ===================================================================== -->
+  <!-- VISOR DE FOTO AMPLIADA -->
   <div id="photoLightboxModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-200">
       <div class="bg-slate-900 text-white px-4 py-3 flex items-center justify-between">
@@ -1050,9 +1034,7 @@
     </div>
   </div>
 
-  <!-- ===================================================================== -->
-  <!-- BARRA DE NAVEGACIÓN INFERIOR EN MÓVILES                               -->
-  <!-- ===================================================================== -->
+  <!-- NAVEGACIÓN INFERIOR MÓVIL -->
   <nav aria-label="Navegación móvil"
     class="sm:hidden fixed bottom-0 inset-x-0 bg-slate-900 text-white border-t border-slate-800 px-1 py-1.5 z-40 grid grid-cols-6 gap-0.5">
     <button type="button" data-view="registrar"
@@ -1082,9 +1064,6 @@
   </nav>
 
   <script>
-    // =======================================================================
-    // CONSTANTES Y CONFIGURACIÓN DE HOTEL TEMPLO (DONCELES 88)
-    // =======================================================================
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzTDAPSYfC3vI9zDrjbPCwAGj6Pm2ZJfPzCXonkqg2RA5Lxehz-iaxwGnEFCIinrVWE/exec";
 
     const STORAGE_KEYS = {
@@ -1159,28 +1138,6 @@
         stockMinimo: 48,
         rama: 'Hotel',
         subRama: 'Recepción'
-      },
-      {
-        id: 'CAT-VERD-SINCOD',
-        nombre: 'Jitomate Saladette Fresco (Sin código de barras)',
-        codigo: '',
-        codigoAlterno: 'SKU-COC-JIT01',
-        piezasPorEmpaque: 1,
-        costoEmpaque: 28.00,
-        stockMinimo: 15,
-        rama: 'Restaurante',
-        subRama: 'Cocina'
-      },
-      {
-        id: 'CAT-AMEN-SINCOD',
-        nombre: 'Amenidad Jabón Artesanal Hotel (Sin código de barras)',
-        codigo: '',
-        codigoAlterno: 'SKU-HAB-JAB01',
-        piezasPorEmpaque: 20,
-        costoEmpaque: 220.00,
-        stockMinimo: 40,
-        rama: 'Hotel',
-        subRama: 'Habitaciones'
       }
     ];
 
@@ -1204,72 +1161,9 @@
         fotoNombre: 'entrada_jumex_6pk.jpg',
         fotoDataUrl: '',
         notas: 'Compra 6PK lote 03 AGO 26'
-      },
-      {
-        id: 'MOV-2026-002',
-        fecha: '2026-11-25 09:00',
-        tipo: 'ENTRADA',
-        proveedor: 'Walmart',
-        almacen: 'Bodega',
-        almacenDestino: '',
-        rama: 'Hotel',
-        subRama: 'Recepción',
-        codigo: '7509991000481',
-        producto: 'Rollo de Papel Higiénico Institucional',
-        empaques: 2,
-        piezasPorEmpaque: 48,
-        totalPiezas: 96,
-        costoEmpaque: 384.00,
-        costoTotal: 768.00,
-        fotoNombre: 'bodega_papel.jpg',
-        fotoDataUrl: '',
-        notas: 'Ingreso a Bodega'
-      },
-      {
-        id: 'MOV-2026-003',
-        fecha: '2026-11-25 09:45',
-        tipo: 'ENTRADA',
-        proveedor: 'Oaxaqueños',
-        almacen: 'Almacén General',
-        almacenDestino: '',
-        rama: 'Restaurante',
-        subRama: 'Cocina',
-        codigo: '',
-        producto: 'Jitomate Saladette Fresco (Sin código de barras)',
-        empaques: 25,
-        piezasPorEmpaque: 1,
-        totalPiezas: 25,
-        costoEmpaque: 28.00,
-        costoTotal: 700.00,
-        fotoNombre: 'jitomate_sin_codigo.jpg',
-        fotoDataUrl: '',
-        notas: 'Registro por foto sin código de barras'
-      },
-      {
-        id: 'MOV-2026-004',
-        fecha: '2026-11-25 10:30',
-        tipo: 'SALIDA',
-        proveedor: 'N/A',
-        almacen: 'Almacén General',
-        almacenDestino: '',
-        rama: 'Restaurante',
-        subRama: 'Barra',
-        codigo: '7501013106930',
-        producto: 'Jumex Único Fresco Naranja 960ml (Pieza Suelta)',
-        empaques: 4,
-        piezasPorEmpaque: 1,
-        totalPiezas: 4,
-        costoEmpaque: 20.00,
-        costoTotal: 80.00,
-        fotoNombre: 'salida_jumex_suelto_barra.jpg',
-        fotoDataUrl: '',
-        notas: '4 piezas sueltas entregadas a Barra'
       }
     ];
 
-    // =======================================================================
-    // ESTADO EN MEMORIA Y PERSISTENCIA
-    // =======================================================================
     let catalog = [];
     let movements = [];
     let providers = [];
@@ -1278,6 +1172,7 @@
     let pendingDeleteMovementId = null;
     let cameraStream = null;
     let scanLoopId = null;
+    let activeScannerTargetInputId = 'codigoBarrasInput';
 
     function getNextSequentialMovementId() {
       let maxNum = 0;
@@ -1339,12 +1234,11 @@
         localStorage.setItem(STORAGE_KEYS.MOVEMENTS, JSON.stringify(movements));
         localStorage.setItem(STORAGE_KEYS.PROVIDERS, JSON.stringify(providers));
       } catch (err) {
-        showFeedback('Aviso: el almacenamiento local está lleno; intenta quitar fotos muy pesadas.', 'warn');
+        showFeedback('Aviso: Almacenamiento local lleno.', 'warn');
       }
       updateNextFolioBadge();
     }
 
-    // Normaliza respuestas de Apps Script (acepta arreglos directos o { catalogo, proveedores, movimientos })
     function normalizeRemoteCatalog(items) {
       if (!Array.isArray(items) || items.length === 0) return null;
       return items
@@ -1438,7 +1332,6 @@
           updatedAny = true;
         }
         if (remMov && remMov.length > 0) {
-          // Conserva fotoDataUrl local si ya existía para el mismo folio MOV-2026-XXX
           const localPhotoMap = new Map();
           movements.forEach((m) => {
             if (m.id && m.fotoDataUrl) localPhotoMap.set(m.id, m.fotoDataUrl);
@@ -1462,31 +1355,26 @@
 
         setSheetsSyncStatus('Sheets OK', 'synced');
         if (notifyUser) {
-          showFeedback('Datos sincronizados desde Google Sheets (catálogo, proveedores y movimientos).', 'ok');
+          showFeedback('Datos sincronizados desde Google Sheets.', 'ok');
         }
         return true;
       } catch (err) {
-        console.warn('No se pudo leer desde Google Sheets (se usa caché local):', err);
+        console.warn('Google Sheets no disponible (usando local):', err);
         setSheetsSyncStatus('Local / Caché', 'local');
         if (notifyUser) {
-          showFeedback('No se pudo obtener lectura desde Google Sheets; se muestran los datos locales.', 'warn');
+          showFeedback('No se pudo leer Google Sheets; mostrando caché local.', 'warn');
         }
         return false;
       }
     }
 
-    // Sincroniza creación, edición o eliminación por folio MOV-2026-XXX hacia Google Sheets
     async function sincronizarMovimientoSheets(action, dataOrId) {
       if (!APPS_SCRIPT_URL) return;
       setSheetsSyncStatus('Enviando...', 'syncing');
       try {
         const cleanAction = action || 'create';
         const payload = cleanAction === 'delete'
-          ? {
-              action: 'delete',
-              id: dataOrId,
-              folio: dataOrId
-            }
+          ? { action: 'delete', id: dataOrId, folio: dataOrId }
           : {
               action: cleanAction,
               id: dataOrId.id,
@@ -1516,14 +1404,43 @@
         });
         setSheetsSyncStatus('Sheets OK', 'synced');
       } catch (err) {
-        console.error('Error al sincronizar movimiento con Google Sheets:', err);
+        console.error('Error al enviar movimiento a Sheets:', err);
         setSheetsSyncStatus('Local / Caché', 'local');
       }
     }
 
-    // =======================================================================
-    // UTILIDADES DE FORMATO, COMPRESIÓN DE FOTO Y NOTIFICACIÓN
-    // =======================================================================
+    async function sincronizarCatalogoSheets(action, catItem) {
+      if (!APPS_SCRIPT_URL) return;
+      setSheetsSyncStatus('Enviando Catálogo...', 'syncing');
+      try {
+        const payload = {
+          action: action === 'update' ? 'catalog_update' : 'catalog_create',
+          id: catItem.codigo || catItem.id,
+          codigo: catItem.codigo || catItem.id,
+          sku: catItem.codigo || catItem.id,
+          nombre: catItem.nombre,
+          rama: catItem.rama || 'Hotel',
+          subRama: catItem.subRama || 'Habitaciones',
+          presentacion: 'Pieza',
+          piezasPorEmpaque: catItem.piezasPorEmpaque || 1,
+          costoEmpaque: catItem.costoEmpaque || 0,
+          stockMinimo: catItem.stockMinimo || 0,
+          codigoAlterno: catItem.codigoAlterno || ''
+        };
+
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        setSheetsSyncStatus('Sheets OK', 'synced');
+      } catch (err) {
+        console.error('Error al sincronizar catálogo con Sheets:', err);
+        setSheetsSyncStatus('Local / Caché', 'local');
+      }
+    }
+
     function formatCurrency(val) {
       return new Intl.NumberFormat('es-MX', {
         style: 'currency',
@@ -1561,7 +1478,6 @@
       banner.classList.remove('hidden');
     }
 
-    // Optimiza la imagen en canvas para conservar nitidez y un tamaño seguro en localStorage
     function compressImageFile(file, maxDim = 900, quality = 0.78) {
       return new Promise((resolve) => {
         if (!file) {
@@ -1610,9 +1526,6 @@
       document.getElementById('lightboxImage').src = '';
     }
 
-    // =======================================================================
-    // NAVEGACIÓN ENTRE VISTAS
-    // =======================================================================
     function switchView(viewName) {
       const views = ['registrar', 'productos', 'proveedores', 'almacenes', 'ventas', 'bitacora'];
       views.forEach((v) => {
@@ -1634,9 +1547,7 @@
           : 'mobile-nav-tab py-1.5 px-0.5 rounded-lg text-[10px] font-semibold text-slate-300 truncate';
       });
 
-      if (viewName !== 'registrar') {
-        stopCameraScanner();
-      }
+      stopCameraScanner();
 
       if (viewName === 'productos') renderFullCatalogView();
       if (viewName === 'proveedores') renderProvidersView();
@@ -1645,9 +1556,6 @@
       if (viewName === 'bitacora') renderBitacoraView();
     }
 
-    // =======================================================================
-    // FORMULARIO DE MOVIMIENTO: ENTRADA, TRASPASO Y SALIDA
-    // =======================================================================
     function populateSubRamaOptions(rama, preferredSubRama = '') {
       const select = document.getElementById('subRamaSelect');
       const hint = document.getElementById('subRamaHint');
@@ -1745,7 +1653,7 @@
       if (item.codigo) {
         badge.textContent = `Producto vinculado: ${item.codigo} (${item.piezasPorEmpaque || 1} pzas/empaque).`;
       } else {
-        badge.textContent = `Producto sin código de barras (${item.codigoAlterno || 'Identificación por nombre y foto'}).`;
+        badge.textContent = `Producto sin código de barras (${item.codigoAlterno || 'Identificación por nombre'}).`;
       }
     }
 
@@ -1755,15 +1663,12 @@
       return catalog.find((c) => c.codigo === clean) || catalog.find((c) => c.codigoAlterno === clean) || null;
     }
 
-    // =======================================================================
-    // CATÁLOGO DE PRODUCTOS EXISTENTES (LISTA RÁPIDA + GESTOR COMPLETO)
-    // =======================================================================
     function renderCatalogUI() {
       document.getElementById('catalogCountBadge').textContent = `${catalog.length} ítems`;
 
       const select = document.getElementById('catalogoSelect');
       const prevSelected = select.value;
-      select.innerHTML = '<option value="">-- Seleccionar producto existente (con o sin código) --</option>';
+      select.innerHTML = '<option value="">-- Seleccionar producto existente --</option>';
 
       catalog.forEach((item) => {
         const opt = document.createElement('option');
@@ -1797,7 +1702,7 @@
             <div class="min-w-0">
               <p class="text-xs font-bold text-slate-900 truncate">${item.nombre}</p>
               <p class="text-[11px] text-slate-500">
-                ${item.codigo ? `<span class="font-mono">${item.codigo}</span>` : '<span class="italic text-amber-800">Sin código de barras</span>'}
+                ${item.codigo ? `<span class="font-mono">${item.codigo}</span>` : '<span class="italic text-amber-800">Sin código</span>'}
                 · ${item.piezasPorEmpaque || 1} pzas/emp · ${item.subRama || item.rama}
               </p>
             </div>
@@ -1911,9 +1816,6 @@
       showFeedback(`Producto "${item.nombre}" eliminado del catálogo.`, 'ok');
     }
 
-    // =======================================================================
-    // GESTIÓN DE PROVEEDORES (AGREGAR Y ELIMINAR)
-    // =======================================================================
     function populateProviderSelects() {
       const entradaSelect = document.getElementById('proveedorSelect');
       const editSelect = document.getElementById('editMovProveedor');
@@ -1991,10 +1893,8 @@
       showFeedback(`Proveedor "${prov.nombre}" eliminado.`, 'ok');
     }
 
-    // =======================================================================
-    // ESCÁNER DE CÁMARA (BARCODEDETECTOR / GETUSERMEDIA EN HTTPS)
-    // =======================================================================
-    async function startCameraScanner() {
+    async function startCameraScanner(targetInputId = 'codigoBarrasInput') {
+      activeScannerTargetInputId = targetInputId;
       const panel = document.getElementById('cameraScannerPanel');
       const statusText = document.getElementById('scannerStatusText');
       const video = document.getElementById('scannerVideo');
@@ -2023,7 +1923,7 @@
           : null;
 
         if (!detector) {
-          statusText.textContent = 'Cámara activa. Ingresa el código manualmente o usa tu lector.';
+          statusText.textContent = 'Cámara activa. Escribe el código manualmente si no se lee automáticamente.';
           return;
         }
 
@@ -2038,26 +1938,30 @@
             const barcodes = await detector.detect(video);
             if (barcodes && barcodes.length > 0 && barcodes[0].rawValue) {
               const detectedCode = String(barcodes[0].rawValue).trim();
-              document.getElementById('codigoBarrasInput').value = detectedCode;
-              const matched = lookupBarcodeInCatalog(detectedCode);
-              if (matched) {
-                fillFormFromCatalogItem(matched);
-                showFeedback(`Código escaneado: ${detectedCode} → ${matched.nombre}`, 'ok');
+              const targetInput = document.getElementById(activeScannerTargetInputId);
+              if (targetInput) targetInput.value = detectedCode;
+
+              if (activeScannerTargetInputId === 'codigoBarrasInput') {
+                const matched = lookupBarcodeInCatalog(detectedCode);
+                if (matched) {
+                  fillFormFromCatalogItem(matched);
+                  showFeedback(`Código escaneado: ${detectedCode} → ${matched.nombre}`, 'ok');
+                } else {
+                  showFeedback(`Código escaneado: ${detectedCode}. Completa los datos.`, 'warn');
+                }
               } else {
-                showFeedback(`Código escaneado: ${detectedCode}. Completa el nombre del producto.`, 'warn');
+                showFeedback(`Código escaneado en catálogo: ${detectedCode}`, 'ok');
               }
               stopCameraScanner();
               return;
             }
-          } catch (scanErr) {
-            // Continúa escaneando
-          }
+          } catch (scanErr) {}
           scanLoopId = requestAnimationFrame(detectFrame);
         };
 
         scanLoopId = requestAnimationFrame(detectFrame);
       } catch (err) {
-        statusText.textContent = 'No se pudo abrir la cámara (revisa permisos o usa lector USB/Bluetooth).';
+        statusText.textContent = 'No se pudo abrir la cámara (revisa permisos).';
       }
     }
 
@@ -2075,9 +1979,6 @@
       document.getElementById('cameraScannerPanel').classList.add('hidden');
     }
 
-    // =======================================================================
-    // CÁLCULOS DE INVENTARIO (ENTRADA, TRASPASO Y SALIDA)
-    // =======================================================================
     function calculateStockRows(almacenFilter = 'TODOS') {
       const map = new Map();
 
@@ -2344,9 +2245,6 @@
       });
     }
 
-    // =======================================================================
-    // BITÁCORA: RENDER, EDICIÓN Y ELIMINACIÓN SIN ALERT/CONFIRM
-    // =======================================================================
     function renderBitacoraView() {
       const globalAlm = document.getElementById('globalAlmacenFilter').value;
       const tipoFilter = document.getElementById('bitacoraTipoFilter').value;
@@ -2436,7 +2334,7 @@
           <td class="py-2.5 px-3 text-xs text-slate-800">${destinoText}</td>
           <td class="py-2.5 px-3">
             <p class="font-semibold text-slate-900">${m.producto}</p>
-            <p class="text-[11px] font-mono text-slate-500">${m.codigo || 'Sin código de barras'}</p>
+            <p class="text-[11px] font-mono text-slate-500">${m.codigo || 'Sin código'}</p>
           </td>
           <td class="py-2.5 px-3 text-right font-bold">${Number(m.totalPiezas).toLocaleString('es-MX')}</td>
           <td class="py-2.5 px-3 text-right font-semibold text-emerald-700">${formatCurrency(m.costoTotal)}</td>
@@ -2544,9 +2442,6 @@
       document.getElementById('editMovementModal').classList.add('hidden');
     }
 
-    // =======================================================================
-    // EXPORTACIÓN CSV COMPATIBLE CON GOOGLE SHEETS
-    // =======================================================================
     function exportMovementsToCSV() {
       const headers = [
         'ID_Movimiento',
@@ -2603,12 +2498,9 @@
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
-      showFeedback('CSV exportado correctamente para Google Sheets.', 'ok');
+      showFeedback('CSV exportado correctamente.', 'ok');
     }
 
-    // =======================================================================
-    // INICIALIZACIÓN Y EVENTOS
-    // =======================================================================
     document.addEventListener('DOMContentLoaded', () => {
       loadState();
       populateSubRamaOptions('Hotel', 'Recepción');
@@ -2618,12 +2510,10 @@
       updateNextFolioBadge();
       cargarDesdeGoogleSheets(false);
 
-      // Botón manual para sincronizar desde Google Sheets
       document.getElementById('refreshSheetsBtn').addEventListener('click', () => {
         cargarDesdeGoogleSheets(true);
       });
 
-      // Navegación
       document.querySelectorAll('.nav-tab, .mobile-nav-tab').forEach((btn) => {
         btn.addEventListener('click', () => switchView(btn.dataset.view));
       });
@@ -2632,7 +2522,6 @@
       document.getElementById('goCatalogoBtn').addEventListener('click', () => switchView('productos'));
       document.getElementById('openFullCatalogBtn').addEventListener('click', () => switchView('productos'));
 
-      // Filtro global de almacén
       document.getElementById('globalAlmacenFilter').addEventListener('change', (e) => {
         const val = e.target.value;
         const pill = document.getElementById('formActiveAlmacenPill');
@@ -2647,34 +2536,28 @@
         if (!document.getElementById('view-bitacora').classList.contains('hidden')) renderBitacoraView();
       });
 
-      // Botones de instalación PWA
-      const installMsg = 'Para instalar como PWA: abre este sitio por HTTPS en Chrome o Safari y elige "Instalar aplicación" o "Agregar a la pantalla principal".';
+      const installMsg = 'Para instalar PWA: abre este sitio en Chrome o Safari y elige "Agregar a la pantalla principal".';
       document.getElementById('installHintBtn').addEventListener('click', () => showFeedback(installMsg, 'ok'));
       document.getElementById('desktopInstallBtn').addEventListener('click', () => showFeedback(installMsg, 'ok'));
 
-      // Banner
       document.getElementById('closeFeedbackBtn').addEventListener('click', () => {
         document.getElementById('feedbackBanner').classList.add('hidden');
       });
 
-      // Tipos de movimiento: ENTRADA, TRASPASO, SALIDA
       document.getElementById('btnTipoEntrada').addEventListener('click', () => setMovementType('ENTRADA'));
       document.getElementById('btnTipoTraspaso').addEventListener('click', () => setMovementType('TRASPASO'));
       document.getElementById('btnTipoSalida').addEventListener('click', () => setMovementType('SALIDA'));
 
-      // Rama y Sub-rama
       document.getElementById('ramaSelect').addEventListener('change', (e) => {
         populateSubRamaOptions(e.target.value);
       });
 
-      // Catálogo desplegable y búsqueda rápida
       document.getElementById('catalogoSelect').addEventListener('change', (e) => {
         const item = catalog.find((c) => c.id === e.target.value);
         if (item) fillFormFromCatalogItem(item);
       });
       document.getElementById('quickCatalogSearch').addEventListener('input', renderCatalogUI);
 
-      // Código de barras / SKU
       document.getElementById('codigoBarrasInput').addEventListener('input', (e) => {
         const matched = lookupBarcodeInCatalog(e.target.value);
         if (matched) {
@@ -2684,20 +2567,20 @@
           document.getElementById('ramaSelect').value = matched.rama || 'Hotel';
           populateSubRamaOptions(matched.rama || 'Hotel', matched.subRama || '');
           updateCalculatedTotals();
-          document.getElementById('barcodeMatchBadge').textContent = `Código reconocido: ${matched.nombre} (${matched.piezasPorEmpaque} pzas/emp).`;
+          document.getElementById('barcodeMatchBadge').textContent = `Código reconocido: ${matched.nombre}`;
         }
       });
 
-      // Cámara escáner
-      document.getElementById('toggleCameraScannerBtn').addEventListener('click', startCameraScanner);
+      // Botones de escáner de cámara
+      document.getElementById('toggleCameraScannerBtn').addEventListener('click', () => startCameraScanner('codigoBarrasInput'));
+      document.getElementById('btnScanQuickCat').addEventListener('click', () => startCameraScanner('newCatCodigo'));
+      document.getElementById('btnScanFullCat').addEventListener('click', () => startCameraScanner('catCodigoInput'));
       document.getElementById('stopCameraScannerBtn').addEventListener('click', stopCameraScanner);
 
-      // Totales en vivo
       ['cantidadEmpaquesInput', 'piezasPorEmpaqueInput', 'costoEmpaqueInput'].forEach((id) => {
         document.getElementById(id).addEventListener('input', updateCalculatedTotals);
       });
 
-      // Foto evidencia en formulario nuevo (con compresión)
       document.getElementById('evidenciaFotoInput').addEventListener('change', async (e) => {
         const file = e.target.files && e.target.files[0];
         if (!file) return;
@@ -2718,19 +2601,17 @@
         document.getElementById('fotoPreviewContainer').classList.add('hidden');
       });
 
-      // Limpiar formulario
       document.getElementById('clearFormBtn').addEventListener('click', () => {
         document.getElementById('movementForm').reset();
         currentPhoto = { name: '', dataUrl: '' };
         document.getElementById('fotoPreviewContainer').classList.add('hidden');
-        document.getElementById('barcodeMatchBadge').textContent = 'Puedes dejarlo en blanco si el producto no tiene código de barras.';
+        document.getElementById('barcodeMatchBadge').textContent = 'Puedes dejarlo en blanco si el producto no tiene código.';
         populateSubRamaOptions('Hotel');
         setMovementType('ENTRADA');
         updateCalculatedTotals();
         updateNextFolioBadge();
       });
 
-      // Guardar movimiento nuevo
       document.getElementById('movementForm').addEventListener('submit', (e) => {
         e.preventDefault();
         try {
@@ -2753,7 +2634,7 @@
           }
 
           if (tipo === 'TRASPASO' && almacen === almacenDestino) {
-            showFeedback('El almacén origen y el almacén destino deben ser distintos en un TRASPASO.', 'warn');
+            showFeedback('El almacén origen y el almacén destino deben ser distintos.', 'warn');
             return;
           }
 
@@ -2811,11 +2692,11 @@
           document.getElementById('fotoPreviewContainer').classList.add('hidden');
           updateCalculatedTotals();
         } catch (err) {
-          showFeedback('No se pudo guardar el movimiento. Verifica los datos.', 'error');
+          showFeedback('No se pudo guardar el movimiento.', 'error');
         }
       });
 
-      // Alta rápida desde panel lateral
+      // Alta rápida desde panel lateral (sincronizada con Sheets)
       document.getElementById('addCatalogForm').addEventListener('submit', (e) => {
         e.preventDefault();
         const nombre = document.getElementById('newCatNombre').value.trim();
@@ -2832,7 +2713,7 @@
         }
 
         const newItem = {
-          id: `CAT-${Date.now().toString().slice(-6)}`,
+          id: codigo || `CAT-${Date.now().toString().slice(-6)}`,
           nombre,
           codigo,
           codigoAlterno: '',
@@ -2845,13 +2726,14 @@
 
         catalog.unshift(newItem);
         saveState();
+        sincronizarCatalogoSheets('create', newItem);
         renderCatalogUI();
         fillFormFromCatalogItem(newItem);
         document.getElementById('addCatalogForm').reset();
-        showFeedback(`Producto "${nombre}" dado de alta en el catálogo.`, 'ok');
+        showFeedback(`Producto "${nombre}" registrado en catálogo local y Google Sheets.`, 'ok');
       });
 
-      // Formulario completo de catálogo (alta y edición)
+      // Formulario completo de catálogo (alta y edición sincronizadas)
       document.getElementById('fullCatalogForm').addEventListener('submit', (e) => {
         e.preventDefault();
         const editId = document.getElementById('editCatalogId').value;
@@ -2869,6 +2751,9 @@
           return;
         }
 
+        let catObj = null;
+        let isUpdate = false;
+
         if (editId) {
           const idx = catalog.findIndex((c) => c.id === editId);
           if (idx !== -1) {
@@ -2883,11 +2768,13 @@
               rama,
               subRama
             };
-            showFeedback(`Producto "${nombre}" actualizado.`, 'ok');
+            catObj = catalog[idx];
+            isUpdate = true;
+            showFeedback(`Producto "${nombre}" actualizado en catálogo local y Sheets.`, 'ok');
           }
         } else {
-          catalog.unshift({
-            id: `CAT-${Date.now().toString().slice(-6)}`,
+          catObj = {
+            id: codigo || `CAT-${Date.now().toString().slice(-6)}`,
             nombre,
             codigo,
             codigoAlterno,
@@ -2896,11 +2783,13 @@
             stockMinimo,
             rama,
             subRama
-          });
-          showFeedback(`Producto "${nombre}" dado de alta en el catálogo.`, 'ok');
+          };
+          catalog.unshift(catObj);
+          showFeedback(`Producto "${nombre}" dado de alta en catálogo local y Sheets.`, 'ok');
         }
 
         saveState();
+        if (catObj) sincronizarCatalogoSheets(isUpdate ? 'update' : 'create', catObj);
         resetFullCatalogForm();
         renderCatalogUI();
       });
@@ -2908,7 +2797,6 @@
       document.getElementById('cancelEditCatalogBtn').addEventListener('click', resetFullCatalogForm);
       document.getElementById('fullCatalogSearch').addEventListener('input', renderFullCatalogView);
 
-      // Proveedores
       document.getElementById('addProveedorForm').addEventListener('submit', (e) => {
         e.preventDefault();
         const nombre = document.getElementById('inputNuevoProveedor').value.trim();
@@ -2927,7 +2815,6 @@
         showFeedback(`Proveedor "${nombre}" agregado.`, 'ok');
       });
 
-      // Filtros de vistas y exportación CSV
       document.getElementById('stockFilterText').addEventListener('input', renderStockView);
       document.getElementById('stockStatusFilter').addEventListener('change', renderStockView);
       document.getElementById('posDetailSelect').addEventListener('change', renderSalesView);
@@ -2947,10 +2834,9 @@
         renderStockView();
         renderSalesView();
         renderBitacoraView();
-        showFeedback('Datos iniciales de demostración restablecidos.', 'ok');
+        showFeedback('Datos iniciales restablecidos.', 'ok');
       });
 
-      // Modal edición movimiento
       document.getElementById('closeEditModalBtn').addEventListener('click', closeEditMovementModal);
       document.getElementById('cancelEditModalBtn').addEventListener('click', closeEditMovementModal);
       document.getElementById('editMovTipo').addEventListener('change', (e) => syncEditModalTypeFields(e.target.value));
@@ -3012,7 +2898,6 @@
         showFeedback(`Folio ${id} actualizado y sincronizado con Google Sheets.`, 'ok');
       });
 
-      // Visor ampliado de foto
       document.getElementById('closeLightboxBtn').addEventListener('click', closePhotoLightbox);
       document.getElementById('photoLightboxModal').addEventListener('click', (e) => {
         if (e.target.id === 'photoLightboxModal') closePhotoLightbox();
