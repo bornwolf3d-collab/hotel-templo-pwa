@@ -336,7 +336,7 @@
               </div>
             </div>
 
-            <!-- Panel Cámara Scanner -->
+            <!-- Panel Cámara Scanner (Vista Registrar Movimiento) -->
             <div id="cameraScannerPanel" class="hidden rounded-2xl border border-slate-300 bg-slate-950 text-white p-3.5 space-y-2.5">
               <div class="flex items-center justify-between">
                 <span class="text-xs font-semibold text-amber-300">
@@ -567,7 +567,7 @@
             </button>
           </div>
           <p class="text-xs text-slate-500 mb-4">
-            Da de alta o actualiza productos. Soporta compras en Galón/Caja y salidas en Onza/Pieza.
+            Da de alta o actualiza productos. Escanea el código con la cámara.
           </p>
 
           <form id="fullCatalogForm" class="space-y-3">
@@ -577,6 +577,7 @@
               <input type="text" id="catNombreInput" required placeholder="Ej. Mezcal Artesanal 1 Galón"
                 class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
             </div>
+
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label for="catCodigoInput" class="block text-xs font-semibold text-slate-700 mb-1">Código de Barras / SKU</label>
@@ -584,7 +585,7 @@
                   <input type="text" id="catCodigoInput" placeholder="Opcional"
                     class="w-full min-w-0 rounded-xl border border-slate-300 px-3 py-2 text-sm" />
                   <button type="button" id="btnScanFullCat" title="Escanear con Cámara"
-                    class="px-3 py-2 rounded-xl bg-slate-900 text-amber-400 text-xs font-bold hover:bg-slate-800">
+                    class="px-3 py-2 rounded-xl bg-slate-900 text-amber-400 text-xs font-bold hover:bg-slate-800 flex items-center justify-center">
                     <i class="fa-solid fa-camera"></i>
                   </button>
                 </div>
@@ -594,6 +595,26 @@
                 <input type="text" id="catAlternoInput" placeholder="Opcional"
                   class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
               </div>
+            </div>
+
+            <!-- PANEL CÁMARA SCANNER (VISTA CATÁLOGO) -->
+            <div id="catalogCameraScannerPanel" class="hidden rounded-2xl border border-slate-300 bg-slate-950 text-white p-3.5 space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-amber-300">
+                  Escáner de Cámara · Catálogo
+                </span>
+                <button type="button" id="stopCatalogCameraScannerBtn"
+                  class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200">
+                  Cerrar cámara
+                </button>
+              </div>
+              <div class="relative rounded-xl overflow-hidden bg-black aspect-video max-h-52 w-full flex items-center justify-center">
+                <video id="catalogScannerVideo" playsinline autoplay muted class="w-full h-full object-cover"></video>
+                <div class="pointer-events-none absolute inset-x-8 top-1/2 -translate-y-1/2 h-0.5 bg-amber-400/80 shadow"></div>
+              </div>
+              <p id="catalogScannerStatusText" class="text-[11px] text-slate-300">
+                Iniciando cámara...
+              </p>
             </div>
 
             <div class="grid grid-cols-2 gap-2.5">
@@ -2042,6 +2063,7 @@
       document.getElementById('catalogFormTitle').textContent = 'Alta de Producto Existente';
       document.getElementById('saveFullCatalogBtn').textContent = 'Guardar Producto en Catálogo';
       document.getElementById('cancelEditCatalogBtn').classList.add('hidden');
+      stopCameraScanner();
     }
 
     function deleteCatalogItem(id) {
@@ -2133,13 +2155,16 @@
 
     async function startCameraScanner(targetInputId = 'codigoBarrasInput') {
       activeScannerTargetInputId = targetInputId;
-      const panel = document.getElementById('cameraScannerPanel');
-      const statusText = document.getElementById('scannerStatusText');
-      const video = document.getElementById('scannerVideo');
+      const isCatalogTarget = targetInputId === 'catCodigoInput';
+      const panel = document.getElementById(isCatalogTarget ? 'catalogCameraScannerPanel' : 'cameraScannerPanel');
+      const statusText = document.getElementById(isCatalogTarget ? 'catalogScannerStatusText' : 'scannerStatusText');
+      const video = document.getElementById(isCatalogTarget ? 'catalogScannerVideo' : 'scannerVideo');
+
+      stopCameraScanner(); // Detener cualquier sesión activa previa
 
       if (!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         panel.classList.remove('hidden');
-        statusText.textContent = 'La cámara requiere HTTPS o localhost. Usa tu lector USB/Bluetooth o escribe el código.';
+        statusText.textContent = 'La cámara requiere HTTPS o localhost. Escribe el código manualmente o usa un lector USB.';
         return;
       }
 
@@ -2161,7 +2186,7 @@
           : null;
 
         if (!detector) {
-          statusText.textContent = 'Cámara activa. Escribe el código manualmente si no se lee automáticamente.';
+          statusText.textContent = 'Cámara activa. Si el navegador no escanea en automático, escribe el código manualmente.';
           return;
         }
 
@@ -2199,7 +2224,8 @@
 
         scanLoopId = requestAnimationFrame(detectFrame);
       } catch (err) {
-        statusText.textContent = 'No se pudo abrir la cámara (revisa permisos).';
+        panel.classList.remove('hidden');
+        statusText.textContent = 'No se pudo abrir la cámara (verifica los permisos del navegador).';
       }
     }
 
@@ -2212,9 +2238,14 @@
         cameraStream.getTracks().forEach((t) => t.stop());
         cameraStream = null;
       }
-      const video = document.getElementById('scannerVideo');
-      if (video) video.srcObject = null;
-      document.getElementById('cameraScannerPanel').classList.add('hidden');
+      ['scannerVideo', 'catalogScannerVideo'].forEach((id) => {
+        const v = document.getElementById(id);
+        if (v) v.srcObject = null;
+      });
+      ['cameraScannerPanel', 'catalogCameraScannerPanel'].forEach((id) => {
+        const p = document.getElementById(id);
+        if (p) p.classList.add('hidden');
+      });
     }
 
     function calculateStockRows(almacenFilter = 'TODOS') {
@@ -2954,6 +2985,7 @@
       document.getElementById('btnScanQuickCat').addEventListener('click', () => startCameraScanner('newCatCodigo'));
       document.getElementById('btnScanFullCat').addEventListener('click', () => startCameraScanner('catCodigoInput'));
       document.getElementById('stopCameraScannerBtn').addEventListener('click', stopCameraScanner);
+      document.getElementById('stopCatalogCameraScannerBtn').addEventListener('click', stopCameraScanner);
 
       ['cantidadEmpaquesInput', 'piezasPorEmpaqueInput', 'costoEmpaqueInput'].forEach((id) => {
         document.getElementById(id).addEventListener('input', updateCalculatedTotals);
