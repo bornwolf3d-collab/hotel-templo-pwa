@@ -246,8 +246,8 @@
               </p>
             </div>
 
-            <!-- Rama / Sub-rama -->
-            <div id="groupRamaSubRama" class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+            <!-- Rama / Sub-rama (ÚNICAMENTE EN SALIDAS) -->
+            <div id="groupRamaSubRama" class="hidden grid-cols-1 sm:grid-cols-2 gap-4 p-3.5 rounded-xl bg-slate-50 border border-slate-200">
               <div>
                 <label for="ramaSelect" class="block text-xs font-semibold text-slate-700 mb-1.5">
                   Rama Principal *
@@ -532,20 +532,6 @@
                   class="w-full rounded-xl border border-slate-300 px-2.5 py-1.5 text-xs font-semibold" />
               </div>
             </div>
-            <div class="grid grid-cols-2 gap-2">
-              <select id="newCatRama" class="rounded-xl border border-slate-300 px-2.5 py-1.5 text-xs bg-white">
-                <option value="Hotel">Hotel</option>
-                <option value="Restaurante">Restaurante</option>
-              </select>
-              <select id="newCatSubRama" class="rounded-xl border border-slate-300 px-2.5 py-1.5 text-xs bg-white">
-                <option value="Habitaciones">Habitaciones</option>
-                <option value="Lavandería">Lavandería</option>
-                <option value="Recepción">Recepción</option>
-                <option value="Piso">Piso</option>
-                <option value="Barra">Barra</option>
-                <option value="Cocina">Cocina</option>
-              </select>
-            </div>
             <button type="submit"
               class="w-full py-2 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition">
               + Alta de Producto en Catálogo
@@ -655,26 +641,6 @@
                   class="w-full rounded-xl border border-slate-300 px-2.5 py-2 text-sm font-semibold" />
               </div>
             </div>
-            <div class="grid grid-cols-2 gap-2.5">
-              <div>
-                <label for="catRamaInput" class="block text-xs font-semibold text-slate-700 mb-1">Rama</label>
-                <select id="catRamaInput" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white">
-                  <option value="Hotel">Hotel</option>
-                  <option value="Restaurante">Restaurante</option>
-                </select>
-              </div>
-              <div>
-                <label for="catSubRamaInput" class="block text-xs font-semibold text-slate-700 mb-1">Sub-rama / PDV</label>
-                <select id="catSubRamaInput" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white">
-                  <option value="Habitaciones">Habitaciones</option>
-                  <option value="Lavandería">Lavandería</option>
-                  <option value="Recepción">Recepción</option>
-                  <option value="Piso">Piso</option>
-                  <option value="Barra">Barra</option>
-                  <option value="Cocina">Cocina</option>
-                </select>
-              </div>
-            </div>
             <button type="submit" id="saveFullCatalogBtn"
               class="w-full py-2.5 px-4 rounded-xl bg-[#3C5E8F] hover:bg-navy-900 text-white text-sm font-bold transition">
               Guardar Producto en Catálogo
@@ -700,7 +666,6 @@
                   <th class="py-2.5 px-3">Código / SKU</th>
                   <th class="py-2.5 px-3 text-right">Rendimiento</th>
                   <th class="py-2.5 px-3 text-right">Costo Compra</th>
-                  <th class="py-2.5 px-3">Área</th>
                   <th class="py-2.5 px-3 text-right">Acciones</th>
                 </tr>
               </thead>
@@ -1023,7 +988,7 @@
               <option value="Almacén General">Almacén General</option>
             </select>
           </div>
-          <div id="editSubRamaWrap">
+          <div id="editSubRamaWrap" class="hidden">
             <label for="editMovSubRama" class="block text-xs font-semibold text-slate-700 mb-1">Sub-rama / Punto de Venta</label>
             <select id="editMovSubRama" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white">
               <option value="Habitaciones">Habitaciones</option>
@@ -1184,9 +1149,7 @@
         unidadSalida: 'Onza',
         piezasPorEmpaque: 128,
         costoEmpaque: 1280.00,
-        stockMinimo: 64,
-        rama: 'Restaurante',
-        subRama: 'Barra'
+        stockMinimo: 64
       },
       {
         id: 'CAT-JUMEX-6PK',
@@ -1197,9 +1160,7 @@
         unidadSalida: 'Pieza',
         piezasPorEmpaque: 6,
         costoEmpaque: 120.00,
-        stockMinimo: 24,
-        rama: 'Restaurante',
-        subRama: 'Barra'
+        stockMinimo: 24
       },
       {
         id: 'CAT-JUMEX-PZ',
@@ -1210,9 +1171,7 @@
         unidadSalida: 'Pieza',
         piezasPorEmpaque: 1,
         costoEmpaque: 20.00,
-        stockMinimo: 24,
-        rama: 'Restaurante',
-        subRama: 'Barra'
+        stockMinimo: 24
       },
       {
         id: 'CAT-COCA-12',
@@ -1223,9 +1182,7 @@
         unidadSalida: 'Pieza',
         piezasPorEmpaque: 12,
         costoEmpaque: 168.00,
-        stockMinimo: 36,
-        rama: 'Restaurante',
-        subRama: 'Barra'
+        stockMinimo: 36
       },
       {
         id: 'CAT-PAPEL-48',
@@ -1236,9 +1193,7 @@
         unidadSalida: 'Pieza',
         piezasPorEmpaque: 48,
         costoEmpaque: 384.00,
-        stockMinimo: 48,
-        rama: 'Hotel',
-        subRama: 'Recepción'
+        stockMinimo: 48
       }
     ];
 
@@ -1250,8 +1205,8 @@
         proveedor: "Mezcalería Donceles",
         almacen: 'Almacén General',
         almacenDestino: '',
-        rama: 'Restaurante',
-        subRama: 'Barra',
+        rama: '',
+        subRama: '',
         codigo: '7509990001112',
         producto: 'Mezcal Artesanal Donceles (Galón a Onzas)',
         empaques: 1,
@@ -1261,7 +1216,7 @@
         costoTotal: 1280.00,
         fotoNombre: 'mezcal_galon.jpg',
         fotoDataUrl: '',
-        notas: 'Entrada de 1 Galón (128 oz) para la Barra'
+        notas: 'Entrada de 1 Galón (128 oz)'
       }
     ];
 
@@ -1275,6 +1230,7 @@
     let scanLoopId = null;
     let activeScannerTargetInputId = 'codigoBarrasInput';
     let highlightedCatalogIndex = -1;
+    const photoRegistry = new Map();
 
     function getNextSequentialMovementId() {
       let maxNum = 0;
@@ -1366,9 +1322,7 @@
           unidadSalida: String(c.unidadSalida || 'Pieza').trim(),
           piezasPorEmpaque: Math.max(0.01, parseFloat(c.piezasPorEmpaque || c.piezas_por_empaque || 1) || 1),
           costoEmpaque: Math.max(0, parseFloat(c.costoEmpaque || c.costo_empaque || 0) || 0),
-          stockMinimo: Math.max(0, parseInt(c.stockMinimo || c.stock_minimo || 0, 10) || 0),
-          rama: String(c.rama || c.Rama || 'Hotel').trim() || 'Hotel',
-          subRama: String(c.subRama || c.sub_rama || 'Habitaciones').trim() || 'Habitaciones'
+          stockMinimo: Math.max(0, parseInt(c.stockMinimo || c.stock_minimo || 0, 10) || 0)
         }))
         .filter((c) => c.nombre.length > 0);
     }
@@ -1402,15 +1356,16 @@
           );
           const costoEmpaque = empaques > 0 ? Number((costoTotal / empaques).toFixed(2)) : costoTotal;
           const id = String(m.id || m.ID || m.folio || `MOV-2026-${String(idx + 1).padStart(3, '0')}`).trim();
+          const tipo = String(m.tipo || m.tipo_movimiento || 'ENTRADA').trim().toUpperCase();
           return {
             id,
             fecha: String(m.fecha || m.fecha_hora || nowTimestamp()).trim(),
-            tipo: String(m.tipo || m.tipo_movimiento || 'ENTRADA').trim().toUpperCase(),
-            proveedor: String(m.proveedor || 'N/A').trim(),
+            tipo,
+            proveedor: tipo === 'ENTRADA' ? String(m.proveedor || 'N/A').trim() : 'N/A',
             almacen: normalizeWarehouseName(m.almacen || m.almacen_origen || 'Almacén General'),
-            almacenDestino: (m.almacenDestino || m.almacen_destino) ? normalizeWarehouseName(m.almacenDestino || m.almacen_destino) : '',
-            rama: String(m.rama || 'Hotel').trim(),
-            subRama: String(m.subRama || m.sub_rama || 'Recepción').trim(),
+            almacenDestino: (tipo === 'TRASPASO' && (m.almacenDestino || m.almacen_destino)) ? normalizeWarehouseName(m.almacenDestino || m.almacen_destino) : '',
+            rama: tipo === 'SALIDA' ? String(m.rama || 'Hotel').trim() : '',
+            subRama: tipo === 'SALIDA' ? String(m.subRama || m.sub_rama || 'Recepción').trim() : '',
             codigo: String(m.codigo || m.codigo_barras || '').trim(),
             producto: String(m.producto || m.Producto || '').trim(),
             empaques,
@@ -1498,13 +1453,13 @@
               folio: dataOrId.id,
               fecha: dataOrId.fecha,
               tipo_movimiento: dataOrId.tipo,
-              proveedor: dataOrId.proveedor || 'N/A',
+              proveedor: dataOrId.tipo === 'ENTRADA' ? (dataOrId.proveedor || 'N/A') : 'N/A',
               codigo_barras: dataOrId.codigo || '',
               producto: dataOrId.producto,
-              rama: dataOrId.rama,
-              sub_rama: dataOrId.subRama,
+              rama: dataOrId.tipo === 'SALIDA' ? (dataOrId.rama || '') : '',
+              sub_rama: dataOrId.tipo === 'SALIDA' ? (dataOrId.subRama || '') : '',
               almacen_origen: dataOrId.almacen,
-              almacen_destino: dataOrId.almacenDestino || '',
+              almacen_destino: dataOrId.tipo === 'TRASPASO' ? (dataOrId.almacenDestino || '') : '',
               cantidad_empaques: dataOrId.empaques,
               total_piezas: dataOrId.totalPiezas,
               costo_total: dataOrId.costoTotal,
@@ -1543,8 +1498,6 @@
           codigo: catItem.codigo || catItem.id || '',
           sku: catItem.codigo || catItem.id || '',
           nombre: catItem.nombre || '',
-          rama: catItem.rama || 'Hotel',
-          subRama: catItem.subRama || 'Habitaciones',
           presentacion: catItem.unidadMedida || 'Pieza',
           unidadMedida: catItem.unidadMedida || 'Pieza',
           unidadSalida: catItem.unidadSalida || 'Pieza',
@@ -1648,6 +1601,12 @@
       document.getElementById('photoLightboxModal').classList.remove('hidden');
     }
 
+    function openPhotoByMovementId(movId) {
+      const entry = photoRegistry.get(movId);
+      if (!entry || !entry.dataUrl) return;
+      openPhotoLightbox(entry.title, entry.dataUrl);
+    }
+
     function closePhotoLightbox() {
       document.getElementById('photoLightboxModal').classList.add('hidden');
       document.getElementById('lightboxImage').src = '';
@@ -1727,7 +1686,8 @@
         btnEntrada.className = 'py-2.5 px-2.5 rounded-xl text-xs font-bold border-2 border-emerald-600 bg-emerald-600 text-white transition';
         groupProv.classList.remove('hidden');
         groupDest.classList.add('hidden');
-        groupRama.classList.remove('hidden');
+        groupRama.classList.add('hidden');
+        groupRama.classList.remove('grid');
         label.textContent = 'Almacén Destino (Entrada) *';
         help.textContent = 'La compra desde el proveedor ingresa a este almacén.';
         submitBtn.textContent = 'Guardar ENTRADA en Inventario';
@@ -1737,6 +1697,7 @@
         groupProv.classList.add('hidden');
         groupDest.classList.remove('hidden');
         groupRama.classList.add('hidden');
+        groupRama.classList.remove('grid');
         label.textContent = 'Almacén Origen (Traspaso) *';
         help.textContent = 'Se descuenta de este almacén y pasa al almacén destino.';
         submitBtn.textContent = 'Guardar TRASPASO entre Almacenes';
@@ -1746,6 +1707,7 @@
         groupProv.classList.add('hidden');
         groupDest.classList.add('hidden');
         groupRama.classList.remove('hidden');
+        groupRama.classList.add('grid');
         label.textContent = 'Almacén Origen (Salida) *';
         help.textContent = 'Se descuenta del almacén y se entrega al punto de venta.';
         submitBtn.textContent = 'Guardar SALIDA a Punto de Venta';
@@ -1816,11 +1778,9 @@
       if (!item) return;
       document.getElementById('codigoBarrasInput').value = item.codigo || '';
       document.getElementById('productoNombreInput').value = item.nombre;
-      document.getElementById('ramaSelect').value = item.rama || 'Hotel';
-      populateSubRamaOptions(item.rama || 'Hotel', item.subRama || '');
       document.getElementById('piezasPorEmpaqueInput').value = item.piezasPorEmpaque || 1;
       document.getElementById('costoEmpaqueInput').value = Number(item.costoEmpaque || 0).toFixed(2);
-      
+
       const tipo = document.getElementById('tipoMovimiento').value;
       updateLabelsForProduct(item, tipo);
       updateCalculatedTotals();
@@ -1861,8 +1821,6 @@
       if (!item) return;
       document.getElementById('catalogoSelect').value = item.id;
       const searchInput = document.getElementById('catalogoSearchInput');
-      const uComp = item.unidadMedida || 'Pieza';
-      const uSal = item.unidadSalida || 'Pieza';
       searchInput.value = `${item.nombre}${item.codigo ? ` [${item.codigo}]` : ''}`;
       document.getElementById('clearCatalogSearchBtn').classList.remove('hidden');
       closeCatalogDropdown();
@@ -1892,13 +1850,13 @@
         btn.className = 'cat-option-item w-full text-left px-3.5 py-2.5 hover:bg-amber-50 focus:bg-amber-50 transition flex items-center justify-between gap-3';
         btn.innerHTML = `
           <div class="min-w-0">
-            <p class="text-xs sm:text-sm font-semibold text-slate-900 truncate">${item.nombre}</p>
+            <p class="text-xs sm:text-sm font-semibold text-slate-900 truncate">${escapeAttr(item.nombre)}</p>
             <p class="text-[11px] text-slate-500">
-              ${item.codigo ? `<span class="font-mono">${item.codigo}</span>` : '<span class="italic text-amber-800">Sin código</span>'}
-              · 1 ${uComp} = ${item.piezasPorEmpaque || 1} ${uSal} · ${item.subRama || item.rama}
+              ${item.codigo ? `<span class="font-mono">${escapeAttr(item.codigo)}</span>` : '<span class="italic text-amber-800">Sin código</span>'}
+              · 1 ${escapeAttr(uComp)} = ${item.piezasPorEmpaque || 1} ${escapeAttr(uSal)}
             </p>
           </div>
-          <span class="shrink-0 text-xs font-bold text-emerald-700">${formatCurrency(item.costoEmpaque)} / ${uComp}</span>
+          <span class="shrink-0 text-xs font-bold text-emerald-700">${formatCurrency(item.costoEmpaque)} / ${escapeAttr(uComp)}</span>
         `;
         btn.addEventListener('mousedown', (e) => {
           e.preventDefault();
@@ -1908,7 +1866,7 @@
       });
     }
 
-    function updateHighlightedCatalogOption(items) {
+    function updateHighlightedCatalogOption() {
       const nodes = document.querySelectorAll('#catalogoDropdownList .cat-option-item');
       nodes.forEach((el, i) => {
         el.classList.toggle('bg-amber-50', i === highlightedCatalogIndex);
@@ -1956,10 +1914,10 @@
           cardBtn.className = 'w-full text-left p-2.5 rounded-xl border border-slate-200 hover:border-amber-400 hover:bg-amber-50/50 transition flex items-center justify-between gap-2';
           cardBtn.innerHTML = `
             <div class="min-w-0">
-              <p class="text-xs font-bold text-slate-900 truncate">${item.nombre}</p>
+              <p class="text-xs font-bold text-slate-900 truncate">${escapeAttr(item.nombre)}</p>
               <p class="text-[11px] text-slate-500">
-                ${item.codigo ? `<span class="font-mono">${item.codigo}</span>` : '<span class="italic text-amber-800">Sin código</span>'}
-                · 1 ${uComp} = ${item.piezasPorEmpaque || 1} ${uSal} · ${item.subRama || item.rama}
+                ${item.codigo ? `<span class="font-mono">${escapeAttr(item.codigo)}</span>` : '<span class="italic text-amber-800">Sin código</span>'}
+                · 1 ${escapeAttr(uComp)} = ${item.piezasPorEmpaque || 1} ${escapeAttr(uSal)}
               </p>
             </div>
             <span class="shrink-0 text-xs font-bold text-emerald-700">${formatCurrency(item.costoEmpaque)}</span>
@@ -1988,13 +1946,12 @@
         return (
           c.nombre.toLowerCase().includes(q) ||
           (c.codigo || '').toLowerCase().includes(q) ||
-          (c.codigoAlterno || '').toLowerCase().includes(q) ||
-          (c.subRama || '').toLowerCase().includes(q)
+          (c.codigoAlterno || '').toLowerCase().includes(q)
         );
       });
 
       if (items.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="py-6 text-center text-slate-400">No hay productos registrados con este filtro.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-slate-400">No hay productos registrados con este filtro.</td></tr>';
         return;
       }
 
@@ -2004,22 +1961,21 @@
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-50';
         tr.innerHTML = `
-          <td class="py-2.5 px-3 font-semibold text-slate-900">${item.nombre}</td>
-          <td class="py-2.5 px-3 font-mono text-xs text-slate-600">${item.codigo || '<span class="italic text-slate-400">Sin código</span>'}</td>
-          <td class="py-2.5 px-3 text-right font-semibold">1 ${uComp} = ${item.piezasPorEmpaque || 1} ${uSal}</td>
-          <td class="py-2.5 px-3 text-right font-semibold text-emerald-700">${formatCurrency(item.costoEmpaque)} / ${uComp}</td>
-          <td class="py-2.5 px-3 text-xs text-slate-600">${item.rama || 'Hotel'} · ${item.subRama || ''}</td>
+          <td class="py-2.5 px-3 font-semibold text-slate-900">${escapeAttr(item.nombre)}</td>
+          <td class="py-2.5 px-3 font-mono text-xs text-slate-600">${item.codigo ? escapeAttr(item.codigo) : '<span class="italic text-slate-400">Sin código</span>'}</td>
+          <td class="py-2.5 px-3 text-right font-semibold">1 ${escapeAttr(uComp)} = ${item.piezasPorEmpaque || 1} ${escapeAttr(uSal)}</td>
+          <td class="py-2.5 px-3 text-right font-semibold text-emerald-700">${formatCurrency(item.costoEmpaque)} / ${escapeAttr(uComp)}</td>
           <td class="py-2.5 px-3 text-right whitespace-nowrap">
             <div class="inline-flex items-center gap-1.5">
-              <button type="button" onclick="useCatalogItemInMovement('${item.id}')"
+              <button type="button" onclick="useCatalogItemInMovement('${escapeAttr(item.id)}')"
                 class="px-2.5 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-950 text-xs font-bold">
                 Usar
               </button>
-              <button type="button" onclick="startEditCatalogItem('${item.id}')"
+              <button type="button" onclick="startEditCatalogItem('${escapeAttr(item.id)}')"
                 class="p-1.5 rounded-lg text-blue-600 hover:bg-blue-50" title="Editar producto">
                 <i class="fa-solid fa-pen"></i>
               </button>
-              <button type="button" onclick="deleteCatalogItem('${item.id}')"
+              <button type="button" onclick="deleteCatalogItem('${escapeAttr(item.id)}')"
                 class="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50" title="Eliminar producto">
                 <i class="fa-solid fa-trash"></i>
               </button>
@@ -2050,8 +2006,6 @@
       document.getElementById('catPiezasEmpInput').value = item.piezasPorEmpaque || 1;
       document.getElementById('catCostoEmpInput').value = Number(item.costoEmpaque || 0).toFixed(2);
       document.getElementById('catStockMinInput').value = item.stockMinimo || 0;
-      document.getElementById('catRamaInput').value = item.rama || 'Hotel';
-      document.getElementById('catSubRamaInput').value = item.subRama || 'Habitaciones';
       document.getElementById('catalogFormTitle').textContent = 'Editar Producto Existente';
       document.getElementById('saveFullCatalogBtn').textContent = 'Actualizar Producto';
       document.getElementById('cancelEditCatalogBtn').classList.remove('hidden');
@@ -2128,11 +2082,11 @@
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-50';
         tr.innerHTML = `
-          <td class="p-3 font-bold text-slate-900">${p.nombre}</td>
-          <td class="p-3 text-xs text-slate-600">${p.categoria || 'General'}</td>
+          <td class="p-3 font-bold text-slate-900">${escapeAttr(p.nombre)}</td>
+          <td class="p-3 text-xs text-slate-600">${escapeAttr(p.categoria || 'General')}</td>
           <td class="p-3 text-center text-xs font-bold text-emerald-700">${countEntradas}</td>
           <td class="p-3 text-right">
-            <button type="button" onclick="deleteProvider('${p.id}')"
+            <button type="button" onclick="deleteProvider('${escapeAttr(p.id)}')"
               class="px-2.5 py-1 rounded-lg text-rose-600 hover:bg-rose-50 text-xs font-bold inline-flex items-center gap-1">
               <i class="fa-solid fa-trash"></i>
               <span>Quitar</span>
@@ -2160,7 +2114,7 @@
       const statusText = document.getElementById(isCatalogTarget ? 'catalogScannerStatusText' : 'scannerStatusText');
       const video = document.getElementById(isCatalogTarget ? 'catalogScannerVideo' : 'scannerVideo');
 
-      stopCameraScanner(); // Detener cualquier sesión activa previa
+      stopCameraScanner();
 
       if (!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         panel.classList.remove('hidden');
@@ -2388,16 +2342,16 @@
         const uSal = r.unidadSalida || 'Pieza';
         const empText = `${r.empaques.toFixed(2)} ${uComp}s`;
         const pzasText = `${r.piezas.toLocaleString('es-MX', { maximumFractionDigits: 2 })} ${uSal}`;
-        
+
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-50';
         tr.innerHTML = `
-          <td class="py-2.5 px-3 font-semibold text-slate-900">${r.producto}</td>
-          <td class="py-2.5 px-3 font-mono text-xs text-slate-600">${r.codigo || '<span class="italic text-slate-400">Sin código</span>'}</td>
-          <td class="py-2.5 px-3 text-xs font-medium text-slate-700">${r.almacen}</td>
-          <td class="py-2.5 px-3 text-right font-semibold">${empText}</td>
-          <td class="py-2.5 px-3 text-right font-bold text-slate-950">${pzasText}</td>
-          <td class="py-2.5 px-3 text-right text-slate-600">${r.stockMinimo} ${uSal}</td>
+          <td class="py-2.5 px-3 font-semibold text-slate-900">${escapeAttr(r.producto)}</td>
+          <td class="py-2.5 px-3 font-mono text-xs text-slate-600">${r.codigo ? escapeAttr(r.codigo) : '<span class="italic text-slate-400">Sin código</span>'}</td>
+          <td class="py-2.5 px-3 text-xs font-medium text-slate-700">${escapeAttr(r.almacen)}</td>
+          <td class="py-2.5 px-3 text-right font-semibold">${escapeAttr(empText)}</td>
+          <td class="py-2.5 px-3 text-right font-bold text-slate-950">${escapeAttr(pzasText)}</td>
+          <td class="py-2.5 px-3 text-right text-slate-600">${r.stockMinimo} ${escapeAttr(uSal)}</td>
           <td class="py-2.5 px-3 text-center">${estadoHtml}</td>
           <td class="py-2.5 px-3 text-right font-semibold text-emerald-700">${formatCurrency(r.valor)}</td>
         `;
@@ -2435,8 +2389,8 @@
       salidas.forEach((m) => {
         if (!statsByPos[m.subRama]) {
           statsByPos[m.subRama] = {
-            rama: m.rama,
-            subRama: m.subRama,
+            rama: m.rama || 'Hotel',
+            subRama: m.subRama || 'N/A',
             desc: 'Punto de venta',
             piezas: 0,
             importe: 0,
@@ -2475,12 +2429,12 @@
           <div>
             <div class="flex items-center justify-between gap-2">
               <span class="px-2 py-0.5 rounded-md text-[11px] font-bold ${isHotel ? 'bg-sky-100 text-sky-900' : 'bg-amber-100 text-amber-900'}">
-                ${pos.rama}
+                ${escapeAttr(pos.rama)}
               </span>
               <span class="text-[11px] text-slate-500">${pos.count} ${pos.count === 1 ? 'registro' : 'registros'}</span>
             </div>
-            <h4 class="text-base font-bold text-slate-900 mt-2">${pos.subRama}</h4>
-            <p class="text-xs text-slate-500">${pos.desc}</p>
+            <h4 class="text-base font-bold text-slate-900 mt-2">${escapeAttr(pos.subRama)}</h4>
+            <p class="text-xs text-slate-500">${escapeAttr(pos.desc)}</p>
           </div>
           <div class="mt-4 pt-3 border-t border-slate-200 flex items-baseline justify-between">
             <div>
@@ -2511,12 +2465,12 @@
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-50';
         tr.innerHTML = `
-          <td class="py-2.5 px-3 whitespace-nowrap text-xs text-slate-600">${m.fecha}</td>
-          <td class="py-2.5 px-3 text-xs font-semibold text-slate-700">${m.rama}</td>
-          <td class="py-2.5 px-3 font-bold text-slate-900">${m.subRama}</td>
-          <td class="py-2.5 px-3 text-xs text-slate-600">${m.almacen}</td>
-          <td class="py-2.5 px-3 font-medium text-slate-900">${m.producto}</td>
-          <td class="py-2.5 px-3 text-right font-bold">${Number(m.totalPiezas).toLocaleString('es-MX', { maximumFractionDigits: 2 })} ${uSal}</td>
+          <td class="py-2.5 px-3 whitespace-nowrap text-xs text-slate-600">${escapeAttr(m.fecha)}</td>
+          <td class="py-2.5 px-3 text-xs font-semibold text-slate-700">${escapeAttr(m.rama || 'N/A')}</td>
+          <td class="py-2.5 px-3 font-bold text-slate-900">${escapeAttr(m.subRama || 'N/A')}</td>
+          <td class="py-2.5 px-3 text-xs text-slate-600">${escapeAttr(m.almacen)}</td>
+          <td class="py-2.5 px-3 font-medium text-slate-900">${escapeAttr(m.producto)}</td>
+          <td class="py-2.5 px-3 text-right font-bold">${Number(m.totalPiezas).toLocaleString('es-MX', { maximumFractionDigits: 2 })} ${escapeAttr(uSal)}</td>
           <td class="py-2.5 px-3 text-right font-bold text-emerald-700">${formatCurrency(m.costoTotal)}</td>
         `;
         tbody.appendChild(tr);
@@ -2548,6 +2502,7 @@
 
       const tbody = document.getElementById('bitacoraTableBody');
       tbody.innerHTML = '';
+      photoRegistry.clear();
 
       if (rows.length === 0) {
         tbody.innerHTML = '<tr><td colspan="9" class="py-6 text-center text-slate-500">No hay movimientos en bitácora con este filtro.</td></tr>';
@@ -2559,29 +2514,39 @@
         if (m.tipo === 'TRASPASO') badgeClass = 'bg-amber-100 text-amber-950';
         if (m.tipo === 'SALIDA') badgeClass = 'bg-indigo-100 text-indigo-800';
 
-        const destinoText = m.tipo === 'TRASPASO'
-          ? `${m.almacen} → <strong>${m.almacenDestino || 'Almacén'}</strong>`
-          : `${m.rama || 'Hotel'} · <strong>${m.subRama || 'N/A'}</strong>`;
+        let destinoText = '-';
+        if (m.tipo === 'TRASPASO') {
+          destinoText = `${escapeAttr(m.almacen)} → <strong>${escapeAttr(m.almacenDestino || 'Almacén')}</strong>`;
+        } else if (m.tipo === 'SALIDA') {
+          destinoText = `${escapeAttr(m.rama || 'Hotel')} · <strong>${escapeAttr(m.subRama || 'N/A')}</strong>`;
+        }
 
         const provAlmText = m.tipo === 'ENTRADA'
-          ? `<p class="font-semibold text-slate-800">${m.proveedor || 'Sin proveedor'}</p><p class="text-[11px] text-slate-500">${m.almacen}</p>`
-          : `<p class="text-xs font-medium text-slate-700">${m.almacen}</p>`;
+          ? `<p class="font-semibold text-slate-800">${escapeAttr(m.proveedor || 'Sin proveedor')}</p><p class="text-[11px] text-slate-500">${escapeAttr(m.almacen)}</p>`
+          : `<p class="text-xs font-medium text-slate-700">${escapeAttr(m.almacen)}</p>`;
 
         const itemCat = catalog.find((c) => c.nombre.toLowerCase() === m.producto.toLowerCase());
         const uSal = itemCat ? (itemCat.unidadSalida || 'Pieza') : 'oz';
 
-        const photoHtml = m.fotoDataUrl
-          ? `<button type="button" onclick="openPhotoLightbox('${m.id} · ${escapeAttr(m.fotoNombre || 'Evidencia')}', '${m.fotoDataUrl}')"
-               class="inline-block group" title="Ampliar foto">
-               <img src="${m.fotoDataUrl}" alt="${escapeAttr(m.fotoNombre || 'Evidencia')}"
-                 class="w-11 h-11 rounded-lg object-cover border border-slate-300 group-hover:ring-2 group-hover:ring-amber-400" />
-             </button>`
-          : `<span class="text-xs text-slate-400">${m.fotoNombre || 'Sin foto'}</span>`;
+        let photoHtml = `<span class="text-xs text-slate-400">${escapeAttr(m.fotoNombre || 'Sin foto')}</span>`;
+        if (m.fotoDataUrl) {
+          photoRegistry.set(m.id, {
+            title: `${m.id} · ${m.fotoNombre || 'Evidencia'}`,
+            dataUrl: m.fotoDataUrl
+          });
+          photoHtml = `
+            <button type="button" onclick="openPhotoByMovementId('${escapeAttr(m.id)}')"
+              class="inline-block group" title="Ampliar foto">
+              <img src="${m.fotoDataUrl}" alt="${escapeAttr(m.fotoNombre || 'Evidencia')}"
+                class="w-11 h-11 rounded-lg object-cover border border-slate-300 group-hover:ring-2 group-hover:ring-amber-400" />
+            </button>
+          `;
+        }
 
         const isConfirmingDelete = pendingDeleteMovementId === m.id;
         const actionsHtml = isConfirmingDelete
           ? `<div class="inline-flex items-center gap-1">
-               <button type="button" onclick="confirmDeleteMovement('${m.id}')"
+               <button type="button" onclick="confirmDeleteMovement('${escapeAttr(m.id)}')"
                  class="px-2 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-bold">
                  Confirmar
                </button>
@@ -2591,11 +2556,11 @@
                </button>
              </div>`
           : `<div class="inline-flex items-center gap-1">
-               <button type="button" onclick="openEditMovementModal('${m.id}')"
+               <button type="button" onclick="openEditMovementModal('${escapeAttr(m.id)}')"
                  class="p-1.5 rounded-lg text-blue-600 hover:bg-blue-50" title="Editar movimiento">
                  <i class="fa-solid fa-pen"></i>
                </button>
-               <button type="button" onclick="requestDeleteMovement('${m.id}')"
+               <button type="button" onclick="requestDeleteMovement('${escapeAttr(m.id)}')"
                  class="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50" title="Eliminar movimiento">
                  <i class="fa-solid fa-trash"></i>
                </button>
@@ -2605,23 +2570,23 @@
         tr.className = 'hover:bg-slate-50';
         tr.innerHTML = `
           <td class="py-2.5 px-3 whitespace-nowrap text-xs">
-            <p class="font-mono font-bold text-slate-800">${m.id}</p>
-            <p class="text-slate-500">${m.fecha}</p>
+            <p class="font-mono font-bold text-slate-800">${escapeAttr(m.id)}</p>
+            <p class="text-slate-500">${escapeAttr(m.fecha)}</p>
           </td>
           <td class="py-2.5 px-3">
-            <span class="px-2 py-0.5 rounded-md text-[11px] font-bold ${badgeClass}">${m.tipo}</span>
+            <span class="px-2 py-0.5 rounded-md text-[11px] font-bold ${badgeClass}">${escapeAttr(m.tipo)}</span>
           </td>
           <td class="py-2.5 px-3 text-xs">${provAlmText}</td>
           <td class="py-2.5 px-3 text-xs text-slate-800">${destinoText}</td>
           <td class="py-2.5 px-3">
-            <p class="font-semibold text-slate-900">${m.producto}</p>
-            <p class="text-[11px] font-mono text-slate-500">${m.codigo || 'Sin código'}</p>
+            <p class="font-semibold text-slate-900">${escapeAttr(m.producto)}</p>
+            <p class="text-[11px] font-mono text-slate-500">${m.codigo ? escapeAttr(m.codigo) : 'Sin código'}</p>
           </td>
-          <td class="py-2.5 px-3 text-right font-bold">${Number(m.totalPiezas).toLocaleString('es-MX', { maximumFractionDigits: 2 })} ${uSal}</td>
+          <td class="py-2.5 px-3 text-right font-bold">${Number(m.totalPiezas).toLocaleString('es-MX', { maximumFractionDigits: 2 })} ${escapeAttr(uSal)}</td>
           <td class="py-2.5 px-3 text-right font-semibold text-emerald-700">${formatCurrency(m.costoTotal)}</td>
           <td class="py-2.5 px-3 text-center">
             ${photoHtml}
-            ${m.notas ? `<p class="text-[11px] text-slate-500 mt-0.5 max-w-[160px] truncate mx-auto" title="${escapeAttr(m.notas)}">${m.notas}</p>` : ''}
+            ${m.notas ? `<p class="text-[11px] text-slate-500 mt-0.5 max-w-[160px] truncate mx-auto" title="${escapeAttr(m.notas)}">${escapeAttr(m.notas)}</p>` : ''}
           </td>
           <td class="py-2.5 px-3 text-right whitespace-nowrap">${actionsHtml}</td>
         `;
@@ -2630,18 +2595,12 @@
     }
 
     function escapeAttr(str) {
-      var amp = String.fromCharCode(38);
-      var quot = String.fromCharCode(34);
-      var apos = String.fromCharCode(39);
-      var lt = String.fromCharCode(60);
-      var gt = String.fromCharCode(62);
-
-      return String(str || '')
-      .split(amp).join(amp + 'amp;')
-      .split(quot).join(amp + 'quot;')
-      .split(apos).join(amp + 'apos;')
-      .split(lt).join(amp + 'lt;')
-      .split(gt).join(amp + 'gt;');
+      return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
     }
 
     function requestDeleteMovement(id) {
@@ -2671,7 +2630,7 @@
 
       provWrap.classList.toggle('hidden', tipo !== 'ENTRADA');
       destWrap.classList.toggle('hidden', tipo !== 'TRASPASO');
-      subWrap.classList.toggle('hidden', tipo === 'TRASPASO');
+      subWrap.classList.toggle('hidden', tipo !== 'SALIDA');
     }
 
     function updateEditFotoPreview() {
@@ -2777,7 +2736,8 @@
         ].map(escapeCsv).join(','));
       });
 
-      const blob = new Blob(['\uFEFF' + csvLines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const blob = new Blob(['﻿' + csvLines.join('
+')], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -2819,11 +2779,11 @@
           m.id,
           m.fecha,
           m.tipo,
-          m.proveedor || 'N/A',
+          m.tipo === 'ENTRADA' ? (m.proveedor || 'N/A') : 'N/A',
           m.almacen,
-          m.almacenDestino || '',
-          m.rama,
-          m.subRama,
+          m.tipo === 'TRASPASO' ? (m.almacenDestino || '') : '',
+          m.tipo === 'SALIDA' ? (m.rama || '') : '',
+          m.tipo === 'SALIDA' ? (m.subRama || '') : '',
           m.codigo,
           m.producto,
           m.empaques,
@@ -2836,7 +2796,8 @@
         ].map(escapeCsv).join(','));
       });
 
-      const blob = new Blob([csvLines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const blob = new Blob([csvLines.join('
+')], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -2925,13 +2886,13 @@
           if (dropdown.classList.contains('hidden')) openCatalogDropdown();
           if (matches.length > 0) {
             highlightedCatalogIndex = (highlightedCatalogIndex + 1) % matches.length;
-            updateHighlightedCatalogOption(matches);
+            updateHighlightedCatalogOption();
           }
         } else if (e.key === 'ArrowUp') {
           e.preventDefault();
           if (matches.length > 0) {
             highlightedCatalogIndex = (highlightedCatalogIndex - 1 + matches.length) % matches.length;
-            updateHighlightedCatalogOption(matches);
+            updateHighlightedCatalogOption();
           }
         } else if (e.key === 'Enter' && !dropdown.classList.contains('hidden')) {
           if (highlightedCatalogIndex >= 0 && matches[highlightedCatalogIndex]) {
@@ -3032,8 +2993,8 @@
           const almacen = document.getElementById('almacenOrigen').value;
           const almacenDestino = tipo === 'TRASPASO' ? document.getElementById('almacenDestinoSelect').value : '';
           const proveedor = tipo === 'ENTRADA' ? (document.getElementById('proveedorSelect').value || 'Otros') : 'N/A';
-          const rama = document.getElementById('ramaSelect').value;
-          const subRama = tipo === 'TRASPASO' ? almacenDestino : document.getElementById('subRamaSelect').value;
+          const rama = tipo === 'SALIDA' ? document.getElementById('ramaSelect').value : '';
+          const subRama = tipo === 'SALIDA' ? document.getElementById('subRamaSelect').value : '';
           const codigo = document.getElementById('codigoBarrasInput').value.trim();
           const producto = document.getElementById('productoNombreInput').value.trim();
           const empaques = Math.max(0.01, parseFloat(document.getElementById('cantidadEmpaquesInput').value) || 1);
@@ -3100,7 +3061,7 @@
           saveState();
           sincronizarMovimientoSheets('create', entry);
 
-          const destinoLabel = tipo === 'TRASPASO' ? `→ ${almacenDestino}` : `→ ${rama} / ${subRama}`;
+          const destinoLabel = tipo === 'TRASPASO' ? `→ ${almacenDestino}` : (tipo === 'SALIDA' ? `→ ${rama} / ${subRama}` : '');
           showFeedback(
             `${entry.id} · ${tipo} guardada (${totalPiezas} unidades · ${formatCurrency(costoTotal)}) en ${almacen} ${destinoLabel}.`,
             'ok'
@@ -3127,8 +3088,6 @@
         const piezasPorEmpaque = Math.max(0.01, parseFloat(document.getElementById('newCatPiezasEmp').value) || 1);
         const costoEmpaque = Math.max(0, parseFloat(document.getElementById('newCatCostoEmp').value) || 0);
         const stockMinimo = Math.max(0, parseInt(document.getElementById('newCatStockMin').value, 10) || 0);
-        const rama = document.getElementById('newCatRama').value;
-        const subRama = document.getElementById('newCatSubRama').value;
 
         if (!nombre) {
           showFeedback('Ingresa un nombre de producto.', 'error');
@@ -3144,9 +3103,7 @@
           unidadSalida,
           piezasPorEmpaque,
           costoEmpaque,
-          stockMinimo,
-          rama,
-          subRama
+          stockMinimo
         };
 
         catalog.unshift(newItem);
@@ -3170,8 +3127,6 @@
         const piezasPorEmpaque = Math.max(0.01, parseFloat(document.getElementById('catPiezasEmpInput').value) || 1);
         const costoEmpaque = Math.max(0, parseFloat(document.getElementById('catCostoEmpInput').value) || 0);
         const stockMinimo = Math.max(0, parseInt(document.getElementById('catStockMinInput').value, 10) || 0);
-        const rama = document.getElementById('catRamaInput').value;
-        const subRama = document.getElementById('catSubRamaInput').value;
 
         if (!nombre) {
           showFeedback('El nombre del producto es obligatorio.', 'error');
@@ -3193,9 +3148,7 @@
               unidadSalida,
               piezasPorEmpaque,
               costoEmpaque,
-              stockMinimo,
-              rama,
-              subRama
+              stockMinimo
             };
             catObj = catalog[idx];
             isUpdate = true;
@@ -3211,9 +3164,7 @@
             unidadSalida,
             piezasPorEmpaque,
             costoEmpaque,
-            stockMinimo,
-            rama,
-            subRama
+            stockMinimo
           };
           catalog.unshift(catObj);
           showFeedback(`Producto "${nombre}" dado de alta en catálogo local y Sheets.`, 'ok');
@@ -3296,8 +3247,8 @@
         const almacen = document.getElementById('editMovAlmacen').value;
         const almacenDestino = tipo === 'TRASPASO' ? document.getElementById('editMovAlmacenDestino').value : '';
         const proveedor = tipo === 'ENTRADA' ? (document.getElementById('editMovProveedor').value || 'N/A') : 'N/A';
-        const subRama = tipo === 'TRASPASO' ? almacenDestino : document.getElementById('editMovSubRama').value;
-        const rama = ['Habitaciones', 'Lavandería', 'Recepción'].includes(subRama) ? 'Hotel' : 'Restaurante';
+        const subRama = tipo === 'SALIDA' ? document.getElementById('editMovSubRama').value : '';
+        const rama = tipo === 'SALIDA' ? (['Habitaciones', 'Lavandería', 'Recepción'].includes(subRama) ? 'Hotel' : 'Restaurante') : '';
         const empaques = Math.max(0.01, parseFloat(document.getElementById('editMovEmpaques').value) || 1);
         const totalPiezas = Math.max(0.01, parseFloat(document.getElementById('editMovPiezas').value) || 1);
         const costoTotal = Math.max(0, parseFloat(document.getElementById('editMovCosto').value) || 0);
