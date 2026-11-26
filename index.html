@@ -275,20 +275,37 @@
               </div>
             </div>
 
-            <!-- Selector Catálogo -->
-            <div>
+            <!-- Buscador / Combobox Catálogo -->
+            <div class="relative">
               <div class="flex items-center justify-between gap-2 mb-1.5">
-                <label for="catalogoSelect" class="block text-xs font-semibold text-slate-700">
-                  Seleccionar Producto Existente (con o sin código de barras)
+                <label for="catalogoSearchInput" class="block text-xs font-semibold text-slate-700">
+                  Buscar y Seleccionar Producto Existente (nombre o código)
                 </label>
                 <button type="button" id="goCatalogoBtn"
                   class="text-xs font-bold text-[#3C5E8F] hover:underline">
                   + Gestionar / Dar de Alta Producto
                 </button>
               </div>
-              <select id="catalogoSelect"
-                class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500">
-              </select>
+
+              <div class="relative flex items-center">
+                <input type="text" id="catalogoSearchInput" autocomplete="off"
+                  placeholder="Escribe nombre o código para filtrar... (o haz clic para ver todos)"
+                  class="w-full rounded-xl border border-slate-300 bg-white pr-16 pl-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500" />
+                <button type="button" id="clearCatalogSearchBtn" title="Limpiar búsqueda"
+                  class="hidden absolute right-9 text-slate-400 hover:text-slate-700 px-1.5 py-1 text-xs">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+                <button type="button" id="toggleCatalogDropdownBtn" title="Mostrar/ocultar lista"
+                  class="absolute right-2.5 text-slate-500 hover:text-slate-800 px-1.5 py-1 text-xs">
+                  <i class="fa-solid fa-chevron-down"></i>
+                </button>
+              </div>
+
+              <input type="hidden" id="catalogoSelect" value="" />
+
+              <div id="catalogoDropdownList"
+                class="hidden absolute z-30 mt-1 w-full max-h-60 overflow-y-auto rounded-xl border border-slate-300 bg-white shadow-lg divide-y divide-slate-100">
+              </div>
             </div>
 
             <!-- Código + Escáner -->
@@ -317,7 +334,7 @@
                   Producto / Insumo *
                 </label>
                 <input type="text" id="productoNombreInput" required
-                  placeholder="Ej. Jumex Único Fresco Naranja 960ml"
+                  placeholder="Ej. Mezcal Artesanal 1 Galón"
                   class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500" />
               </div>
             </div>
@@ -342,46 +359,46 @@
               </p>
             </div>
 
-            <!-- Cantidades -->
+            <!-- Cantidades y Conversión de Galones / Onzas -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div>
-                <label for="cantidadEmpaquesInput" class="block text-xs font-semibold text-slate-700 mb-1">
-                  Empaques / Cant. *
+                <label id="cantidadEmpaquesLabel" for="cantidadEmpaquesInput" class="block text-xs font-semibold text-slate-700 mb-1">
+                  Cant. Compra (Galones/Emp) *
                 </label>
-                <input type="number" id="cantidadEmpaquesInput" min="1" step="1" value="1" required
+                <input type="number" id="cantidadEmpaquesInput" min="0.01" step="any" value="1" required
                   class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500" />
               </div>
 
               <div>
-                <label for="piezasPorEmpaqueInput" class="block text-xs font-semibold text-slate-700 mb-1">
-                  Piezas / Empaque *
+                <label id="piezasPorEmpaqueLabel" for="piezasPorEmpaqueInput" class="block text-xs font-semibold text-slate-700 mb-1">
+                  Onzas / Galón (Tasa) *
                 </label>
-                <input type="number" id="piezasPorEmpaqueInput" min="1" step="1" value="6" required
+                <input type="number" id="piezasPorEmpaqueInput" min="0.01" step="any" value="128" required
                   class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500" />
               </div>
 
               <div>
-                <label for="costoEmpaqueInput" class="block text-xs font-semibold text-slate-700 mb-1">
-                  Costo / Empaque ($) *
+                <label id="costoEmpaqueLabel" for="costoEmpaqueInput" class="block text-xs font-semibold text-slate-700 mb-1">
+                  Costo / Galón ($) *
                 </label>
-                <input type="number" id="costoEmpaqueInput" min="0" step="0.01" value="120.00" required
+                <input type="number" id="costoEmpaqueInput" min="0" step="0.01" value="1280.00" required
                   class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500" />
               </div>
 
               <div>
-                <span class="block text-xs font-semibold text-slate-700 mb-1">Resumen</span>
+                <span class="block text-xs font-semibold text-slate-700 mb-1">Resumen Conversión</span>
                 <div class="rounded-xl bg-amber-50 border border-amber-200 px-3 py-1.5 text-xs">
                   <div class="flex justify-between text-slate-700">
-                    <span>Piezas:</span>
-                    <strong id="calcTotalPiezas" class="text-slate-950">6</strong>
+                    <span id="lblResumenPiezas">Total Onzas:</span>
+                    <strong id="calcTotalPiezas" class="text-slate-950">128 oz</strong>
                   </div>
                   <div class="flex justify-between text-slate-700 mt-0.5">
-                    <span>Costo:</span>
-                    <strong id="calcCostoTotal" class="text-emerald-800">$120.00</strong>
+                    <span>Costo Total:</span>
+                    <strong id="calcCostoTotal" class="text-emerald-800">$1,280.00</strong>
                   </div>
                   <div class="flex justify-between text-[10px] text-slate-500 mt-0.5">
-                    <span>C.U.:</span>
-                    <strong id="calcCostoUnitario" class="text-slate-700">$20.00</strong>
+                    <span id="lblResumenUnitario">Costo / Onza:</span>
+                    <strong id="calcCostoUnitario" class="text-slate-700">$10.00 / oz</strong>
                   </div>
                 </div>
               </div>
@@ -415,7 +432,7 @@
                   Notas / Lote / Referencia
                 </label>
                 <textarea id="notasInput" rows="2"
-                  placeholder="Ej. Lote, caducidad, vale firmado..."
+                  placeholder="Ej. Mezcal artesanal 1 Galón (128 oz) entregado en garrafón..."
                   class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500"></textarea>
               </div>
             </div>
@@ -479,14 +496,36 @@
                 </button>
               </div>
             </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label for="newCatUnidadMedida" class="block text-[10px] font-semibold text-slate-600">Unidad Compra</label>
+                <select id="newCatUnidadMedida" class="w-full rounded-xl border border-slate-300 px-2 py-1.5 text-xs bg-white">
+                  <option value="Pieza">Pieza</option>
+                  <option value="Galón">Galón</option>
+                  <option value="Paquete">Paquete</option>
+                  <option value="Caja">Caja</option>
+                  <option value="Litro">Litro</option>
+                </select>
+              </div>
+              <div>
+                <label for="newCatUnidadSalida" class="block text-[10px] font-semibold text-slate-600">Unidad Salida/PDV</label>
+                <select id="newCatUnidadSalida" class="w-full rounded-xl border border-slate-300 px-2 py-1.5 text-xs bg-white">
+                  <option value="Pieza">Pieza</option>
+                  <option value="Onza">Onza (oz)</option>
+                  <option value="ml">Mililitros (ml)</option>
+                </select>
+              </div>
+            </div>
+
             <div class="grid grid-cols-3 gap-2">
               <div>
-                <label for="newCatPiezasEmp" class="block text-[10px] font-semibold text-slate-600">Pzas/Emp</label>
-                <input type="number" id="newCatPiezasEmp" min="1" value="1"
+                <label for="newCatPiezasEmp" class="block text-[10px] font-semibold text-slate-600">Equivalencia</label>
+                <input type="number" id="newCatPiezasEmp" min="0.01" step="any" value="1"
                   class="w-full rounded-xl border border-slate-300 px-2.5 py-1.5 text-xs font-semibold" />
               </div>
               <div>
-                <label for="newCatCostoEmp" class="block text-[10px] font-semibold text-slate-600">Costo Emp ($)</label>
+                <label for="newCatCostoEmp" class="block text-[10px] font-semibold text-slate-600">Costo Compra ($)</label>
                 <input type="number" id="newCatCostoEmp" min="0" step="0.01" value="50.00"
                   class="w-full rounded-xl border border-slate-300 px-2.5 py-1.5 text-xs font-semibold" />
               </div>
@@ -531,14 +570,14 @@
             </button>
           </div>
           <p class="text-xs text-slate-500 mb-4">
-            Da de alta o actualiza productos. Escanea el código con la cámara.
+            Da de alta o actualiza productos. Soporta compras en Galón/Caja y salidas en Onza/Pieza.
           </p>
 
           <form id="fullCatalogForm" class="space-y-3">
             <input type="hidden" id="editCatalogId" value="" />
             <div>
               <label for="catNombreInput" class="block text-xs font-semibold text-slate-700 mb-1">Nombre del Producto *</label>
-              <input type="text" id="catNombreInput" required placeholder="Ej. Aceite de Oliva Extra Virgen 5L"
+              <input type="text" id="catNombreInput" required placeholder="Ej. Mezcal Artesanal 1 Galón"
                 class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -559,14 +598,36 @@
                   class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
               </div>
             </div>
+
+            <div class="grid grid-cols-2 gap-2.5">
+              <div>
+                <label for="catUnidadMedidaInput" class="block text-xs font-semibold text-slate-700 mb-1">Unidad Compra *</label>
+                <select id="catUnidadMedidaInput" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white">
+                  <option value="Pieza">Pieza</option>
+                  <option value="Galón">Galón</option>
+                  <option value="Paquete">Paquete</option>
+                  <option value="Caja">Caja</option>
+                  <option value="Litro">Litro</option>
+                </select>
+              </div>
+              <div>
+                <label for="catUnidadSalidaInput" class="block text-xs font-semibold text-slate-700 mb-1">Unidad Salida / PDV *</label>
+                <select id="catUnidadSalidaInput" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white">
+                  <option value="Pieza">Pieza</option>
+                  <option value="Onza">Onza (oz)</option>
+                  <option value="ml">Mililitros (ml)</option>
+                </select>
+              </div>
+            </div>
+
             <div class="grid grid-cols-3 gap-2.5">
               <div>
-                <label for="catPiezasEmpInput" class="block text-xs font-semibold text-slate-700 mb-1">Pzas/Emp *</label>
-                <input type="number" id="catPiezasEmpInput" min="1" value="1" required
+                <label for="catPiezasEmpInput" class="block text-xs font-semibold text-slate-700 mb-1">Salidas / Compra *</label>
+                <input type="number" id="catPiezasEmpInput" min="0.01" step="any" value="1" required
                   class="w-full rounded-xl border border-slate-300 px-2.5 py-2 text-sm font-semibold" />
               </div>
               <div>
-                <label for="catCostoEmpInput" class="block text-xs font-semibold text-slate-700 mb-1">Costo Emp ($) *</label>
+                <label for="catCostoEmpInput" class="block text-xs font-semibold text-slate-700 mb-1">Costo Compra ($) *</label>
                 <input type="number" id="catCostoEmpInput" min="0" step="0.01" value="0.00" required
                   class="w-full rounded-xl border border-slate-300 px-2.5 py-2 text-sm font-semibold" />
               </div>
@@ -619,8 +680,8 @@
                 <tr class="border-b border-slate-200 bg-slate-50 text-[11px] uppercase tracking-wider text-slate-500">
                   <th class="py-2.5 px-3">Producto</th>
                   <th class="py-2.5 px-3">Código / SKU</th>
-                  <th class="py-2.5 px-3 text-right">Pzas/Emp</th>
-                  <th class="py-2.5 px-3 text-right">Costo Emp</th>
+                  <th class="py-2.5 px-3 text-right">Rendimiento</th>
+                  <th class="py-2.5 px-3 text-right">Costo Compra</th>
                   <th class="py-2.5 px-3">Área</th>
                   <th class="py-2.5 px-3 text-right">Acciones</th>
                 </tr>
@@ -645,14 +706,14 @@
               <label for="inputNuevoProveedor" class="block text-xs font-semibold uppercase text-slate-600 mb-1">
                 Nombre del Proveedor *
               </label>
-              <input type="text" id="inputNuevoProveedor" required placeholder="Ej. Sam's Club, Aurrera, Walmart..."
+              <input type="text" id="inputNuevoProveedor" required placeholder="Ej. Mezcalería Donceles, Sam's Club..."
                 class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-amber-500" />
             </div>
             <div>
               <label for="inputCategoriaProveedor" class="block text-xs font-semibold uppercase text-slate-600 mb-1">
                 Giro / Categoría
               </label>
-              <input type="text" id="inputCategoriaProveedor" placeholder="Ej. Abarrotes, Blancos, Bebidas"
+              <input type="text" id="inputCategoriaProveedor" placeholder="Ej. Licores, Abarrotes, Blancos"
                 class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-amber-500" />
             </div>
             <button type="submit"
@@ -689,13 +750,13 @@
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
           <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Almacén General</p>
-          <p id="kpiStockGeneralPzas" class="text-2xl font-extrabold text-slate-900 mt-1">0 pzas</p>
+          <p id="kpiStockGeneralPzas" class="text-2xl font-extrabold text-slate-900 mt-1">0 unidades</p>
           <p id="kpiStockGeneralVal" class="text-xs font-semibold text-emerald-700 mt-0.5">Valor: $0.00</p>
         </div>
 
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
           <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Bodega + Almacén</p>
-          <p id="kpiStockBodegaPzas" class="text-2xl font-extrabold text-slate-900 mt-1">0 pzas</p>
+          <p id="kpiStockBodegaPzas" class="text-2xl font-extrabold text-slate-900 mt-1">0 unidades</p>
           <p id="kpiStockBodegaVal" class="text-xs font-semibold text-emerald-700 mt-0.5">Valor: $0.00</p>
         </div>
 
@@ -706,7 +767,7 @@
               0 alertas
             </span>
           </div>
-          <p id="kpiStockTotalPzas" class="text-2xl font-extrabold text-amber-700 mt-1">0 pzas</p>
+          <p id="kpiStockTotalPzas" class="text-2xl font-extrabold text-amber-700 mt-1">0 unidades</p>
           <p id="kpiStockTotalVal" class="text-xs font-semibold text-slate-700 mt-0.5">Valor total: $0.00</p>
         </div>
       </div>
@@ -716,7 +777,7 @@
           <div>
             <h2 class="text-base sm:text-lg font-bold text-slate-900">Existencias por Almacén</h2>
             <p class="text-xs text-slate-500">
-              Calculado según ENTRADAS, TRASPASOS y SALIDAS.
+              Calculado según ENTRADAS, TRASPASOS y SALIDAS (unidades de salida/onzas/piezas).
             </p>
           </div>
           <div class="flex flex-wrap items-center gap-2">
@@ -739,8 +800,8 @@
                 <th class="py-2.5 px-3 rounded-tl-xl">Producto</th>
                 <th class="py-2.5 px-3">Código / SKU</th>
                 <th class="py-2.5 px-3">Almacén</th>
-                <th class="py-2.5 px-3 text-right">Empaques</th>
-                <th class="py-2.5 px-3 text-right">Piezas</th>
+                <th class="py-2.5 px-3 text-right">Envases/Galones</th>
+                <th class="py-2.5 px-3 text-right">Existencia Salida</th>
                 <th class="py-2.5 px-3 text-right">Mínimo</th>
                 <th class="py-2.5 px-3 text-center">Estado</th>
                 <th class="py-2.5 px-3 text-right rounded-tr-xl">Valor ($)</th>
@@ -779,7 +840,7 @@
           <div class="rounded-2xl border border-sky-200 bg-sky-50/70 p-4 flex items-center justify-between">
             <div>
               <span class="text-[11px] font-bold uppercase tracking-wider text-sky-900">Rama Hotel</span>
-              <p id="posHotelPzas" class="text-xl font-extrabold text-slate-900 mt-0.5">0 pzas</p>
+              <p id="posHotelPzas" class="text-xl font-extrabold text-slate-900 mt-0.5">0 unidades</p>
             </div>
             <div class="text-right">
               <span class="text-[11px] text-sky-900 font-semibold">Importe acumulado</span>
@@ -790,7 +851,7 @@
           <div class="rounded-2xl border border-amber-200 bg-amber-50/70 p-4 flex items-center justify-between">
             <div>
               <span class="text-[11px] font-bold uppercase tracking-wider text-amber-900">Rama Restaurante</span>
-              <p id="posRestPzas" class="text-xl font-extrabold text-slate-900 mt-0.5">0 pzas</p>
+              <p id="posRestPzas" class="text-xl font-extrabold text-slate-900 mt-0.5">0 unidades</p>
             </div>
             <div class="text-right">
               <span class="text-[11px] text-amber-900 font-semibold">Importe acumulado</span>
@@ -811,7 +872,7 @@
                 <th class="py-2.5 px-3">Punto de Venta</th>
                 <th class="py-2.5 px-3">Almacén Origen</th>
                 <th class="py-2.5 px-3">Producto</th>
-                <th class="py-2.5 px-3 text-right">Piezas</th>
+                <th class="py-2.5 px-3 text-right">Cant. Salida</th>
                 <th class="py-2.5 px-3 text-right rounded-tr-xl">Importe ($)</th>
               </tr>
             </thead>
@@ -875,7 +936,7 @@
                 <th class="py-2.5 px-3">Proveedor / Almacén</th>
                 <th class="py-2.5 px-3">Destino / PDV</th>
                 <th class="py-2.5 px-3">Código / Producto</th>
-                <th class="py-2.5 px-3 text-right">Piezas</th>
+                <th class="py-2.5 px-3 text-right">Cant. Salida/Pzas</th>
                 <th class="py-2.5 px-3 text-right">Costo ($)</th>
                 <th class="py-2.5 px-3 text-center">Foto / Notas</th>
                 <th class="py-2.5 px-3 text-right rounded-tr-xl">Acciones</th>
@@ -967,12 +1028,12 @@
 
         <div class="grid grid-cols-3 gap-3">
           <div>
-            <label for="editMovEmpaques" class="block text-xs font-semibold text-slate-700 mb-1">Empaques *</label>
-            <input type="number" id="editMovEmpaques" min="1" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold" />
+            <label for="editMovEmpaques" class="block text-xs font-semibold text-slate-700 mb-1">Empaques/Galones *</label>
+            <input type="number" id="editMovEmpaques" min="0.01" step="any" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold" />
           </div>
           <div>
-            <label for="editMovPiezas" class="block text-xs font-semibold text-slate-700 mb-1">Total Piezas *</label>
-            <input type="number" id="editMovPiezas" min="1" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold" />
+            <label for="editMovPiezas" class="block text-xs font-semibold text-slate-700 mb-1">Total Salidas/Onzas *</label>
+            <input type="number" id="editMovPiezas" min="0.01" step="any" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold" />
           </div>
           <div>
             <label for="editMovCosto" class="block text-xs font-semibold text-slate-700 mb-1">Costo Total ($) *</label>
@@ -1080,7 +1141,7 @@
       { rama: 'Hotel', subRama: 'Lavandería', desc: 'Blancos, detergentes y lavado' },
       { rama: 'Hotel', subRama: 'Recepción', desc: 'Insumos y rollos de papel higiénico' },
       { rama: 'Restaurante', subRama: 'Piso', desc: 'Servicio de mesas y comedor' },
-      { rama: 'Restaurante', subRama: 'Barra', desc: 'Bebidas, jugos y preparación' },
+      { rama: 'Restaurante', subRama: 'Barra', desc: 'Bebidas, jugos, cócteles y mezcal' },
       { rama: 'Restaurante', subRama: 'Cocina', desc: 'Insumos y operación culinaria' }
     ];
 
@@ -1088,16 +1149,31 @@
       { id: 'PROV-1', nombre: "Sam's Club", categoria: 'Mayorista / Abarrotes' },
       { id: 'PROV-2', nombre: 'Aurrera', categoria: 'Abarrotes' },
       { id: 'PROV-3', nombre: 'Walmart', categoria: 'Suministros Varios' },
-      { id: 'PROV-4', nombre: 'Oaxaqueños', categoria: 'Insumos Locales' },
+      { id: 'PROV-4', nombre: 'Mezcalería Donceles', categoria: 'Destilados Artesanales' },
       { id: 'PROV-5', nombre: 'Otros', categoria: 'Proveedores Varios' }
     ];
 
     const DEFAULT_CATALOG = [
       {
+        id: 'CAT-MEZCAL-GALON',
+        nombre: 'Mezcal Artesanal Donceles (Galón a Onzas)',
+        codigo: '7509990001112',
+        codigoAlterno: 'MEZ-GAL-01',
+        unidadMedida: 'Galón',
+        unidadSalida: 'Onza',
+        piezasPorEmpaque: 128,
+        costoEmpaque: 1280.00,
+        stockMinimo: 64,
+        rama: 'Restaurante',
+        subRama: 'Barra'
+      },
+      {
         id: 'CAT-JUMEX-6PK',
         nombre: 'Jumex Único Fresco Naranja 960ml (Paquete 6PK)',
         codigo: '7501013102987',
         codigoAlterno: '7501013106930',
+        unidadMedida: 'Paquete',
+        unidadSalida: 'Pieza',
         piezasPorEmpaque: 6,
         costoEmpaque: 120.00,
         stockMinimo: 24,
@@ -1109,6 +1185,8 @@
         nombre: 'Jumex Único Fresco Naranja 960ml (Pieza Suelta)',
         codigo: '7501013106930',
         codigoAlterno: '7501013102987',
+        unidadMedida: 'Pieza',
+        unidadSalida: 'Pieza',
         piezasPorEmpaque: 1,
         costoEmpaque: 20.00,
         stockMinimo: 24,
@@ -1120,6 +1198,8 @@
         nombre: 'Coca-Cola Regular 355ml (Paquete 12)',
         codigo: '7501055300077',
         codigoAlterno: '',
+        unidadMedida: 'Paquete',
+        unidadSalida: 'Pieza',
         piezasPorEmpaque: 12,
         costoEmpaque: 168.00,
         stockMinimo: 36,
@@ -1131,6 +1211,8 @@
         nombre: 'Rollo de Papel Higiénico Institucional',
         codigo: '7509991000481',
         codigoAlterno: '',
+        unidadMedida: 'Paquete',
+        unidadSalida: 'Pieza',
         piezasPorEmpaque: 48,
         costoEmpaque: 384.00,
         stockMinimo: 48,
@@ -1144,21 +1226,21 @@
         id: 'MOV-2026-001',
         fecha: '2026-11-25 08:15',
         tipo: 'ENTRADA',
-        proveedor: "Sam's Club",
+        proveedor: "Mezcalería Donceles",
         almacen: 'Almacén General',
         almacenDestino: '',
         rama: 'Restaurante',
         subRama: 'Barra',
-        codigo: '7501013102987',
-        producto: 'Jumex Único Fresco Naranja 960ml (Paquete 6PK)',
-        empaques: 6,
-        piezasPorEmpaque: 6,
-        totalPiezas: 36,
-        costoEmpaque: 120.00,
-        costoTotal: 720.00,
-        fotoNombre: 'entrada_jumex_6pk.jpg',
+        codigo: '7509990001112',
+        producto: 'Mezcal Artesanal Donceles (Galón a Onzas)',
+        empaques: 1,
+        piezasPorEmpaque: 128,
+        totalPiezas: 128,
+        costoEmpaque: 1280.00,
+        costoTotal: 1280.00,
+        fotoNombre: 'mezcal_galon.jpg',
         fotoDataUrl: '',
-        notas: 'Compra 6PK lote 03 AGO 26'
+        notas: 'Entrada de 1 Galón (128 oz) para la Barra'
       }
     ];
 
@@ -1171,6 +1253,7 @@
     let cameraStream = null;
     let scanLoopId = null;
     let activeScannerTargetInputId = 'codigoBarrasInput';
+    let highlightedCatalogIndex = -1;
 
     function getNextSequentialMovementId() {
       let maxNum = 0;
@@ -1245,7 +1328,9 @@
           nombre: String(c.nombre || c.producto || c.Nombre || c.Producto || '').trim(),
           codigo: String(c.codigo || c.codigo_barras || c.Codigo || '').trim(),
           codigoAlterno: String(c.codigoAlterno || c.codigo_alterno || '').trim(),
-          piezasPorEmpaque: Math.max(1, parseInt(c.piezasPorEmpaque || c.piezas_por_empaque || 1, 10) || 1),
+          unidadMedida: String(c.unidadMedida || c.presentacion || 'Pieza').trim(),
+          unidadSalida: String(c.unidadSalida || 'Pieza').trim(),
+          piezasPorEmpaque: Math.max(0.01, parseFloat(c.piezasPorEmpaque || c.piezas_por_empaque || 1) || 1),
           costoEmpaque: Math.max(0, parseFloat(c.costoEmpaque || c.costo_empaque || 0) || 0),
           stockMinimo: Math.max(0, parseInt(c.stockMinimo || c.stock_minimo || 0, 10) || 0),
           rama: String(c.rama || c.Rama || 'Hotel').trim() || 'Hotel',
@@ -1274,12 +1359,12 @@
       if (!Array.isArray(items) || items.length === 0) return null;
       return items
         .map((m, idx) => {
-          const empaques = Math.max(1, parseInt(m.empaques || m.cantidad_empaques || 1, 10) || 1);
-          const totalPiezas = Math.max(1, parseInt(m.totalPiezas || m.total_piezas || empaques, 10) || 1);
+          const empaques = Math.max(0.01, parseFloat(m.empaques || m.cantidad_empaques || 1) || 1);
+          const totalPiezas = Math.max(0.01, parseFloat(m.totalPiezas || m.total_piezas || empaques) || 1);
           const costoTotal = Math.max(0, parseFloat(m.costoTotal || m.costo_total || 0) || 0);
           const piezasPorEmpaque = Math.max(
-            1,
-            parseInt(m.piezasPorEmpaque || m.piezas_por_empaque || Math.round(totalPiezas / empaques) || 1, 10) || 1
+            0.01,
+            parseFloat(m.piezasPorEmpaque || m.piezas_por_empaque || (totalPiezas / empaques) || 1) || 1
           );
           const costoEmpaque = empaques > 0 ? Number((costoTotal / empaques).toFixed(2)) : costoTotal;
           const id = String(m.id || m.ID || m.folio || `MOV-2026-${String(idx + 1).padStart(3, '0')}`).trim();
@@ -1426,8 +1511,11 @@
           nombre: catItem.nombre || '',
           rama: catItem.rama || 'Hotel',
           subRama: catItem.subRama || 'Habitaciones',
-          presentacion: 'Pieza',
+          presentacion: catItem.unidadMedida || 'Pieza',
+          unidadMedida: catItem.unidadMedida || 'Pieza',
+          unidadSalida: catItem.unidadSalida || 'Pieza',
           piezasPorEmpaque: catItem.piezasPorEmpaque || 1,
+          factorConversion: catItem.piezasPorEmpaque || 1,
           costoEmpaque: catItem.costoEmpaque || 0,
           stockMinimo: catItem.stockMinimo || 0,
           codigoAlterno: catItem.codigoAlterno || ''
@@ -1629,19 +1717,65 @@
         submitBtn.textContent = 'Guardar SALIDA a Punto de Venta';
         submitBtn.className = 'flex-1 py-3 px-5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-sm transition';
       }
+
+      const selectedId = document.getElementById('catalogoSelect').value;
+      if (selectedId) {
+        const item = catalog.find((c) => c.id === selectedId);
+        if (item) updateLabelsForProduct(item, tipo);
+      }
+    }
+
+    function updateLabelsForProduct(item, tipo) {
+      const uComp = item.unidadMedida || 'Pieza';
+      const uSal = item.unidadSalida || 'Pieza';
+
+      const lblEmp = document.getElementById('cantidadEmpaquesLabel');
+      const lblFactor = document.getElementById('piezasPorEmpaqueLabel');
+      const lblCosto = document.getElementById('costoEmpaqueLabel');
+      const lblResumenPzas = document.getElementById('lblResumenPiezas');
+      const lblResumenUnit = document.getElementById('lblResumenUnitario');
+
+      if (tipo === 'SALIDA') {
+        lblEmp.textContent = `Cant. Salida (${uSal}) *`;
+        lblFactor.textContent = `Equiv. Salida (${uSal}/${uComp})`;
+        lblCosto.textContent = `Costo Compra (${uComp}) ($)`;
+        lblResumenPzas.textContent = `Total Salida:`;
+        lblResumenUnit.textContent = `Costo / ${uSal}:`;
+      } else {
+        lblEmp.textContent = `Cant. Compra (${uComp}s) *`;
+        lblFactor.textContent = `${uSal}s / ${uComp} (Tasa) *`;
+        lblCosto.textContent = `Costo / ${uComp} ($) *`;
+        lblResumenPzas.textContent = `Total ${uSal}s:`;
+        lblResumenUnit.textContent = `Costo / ${uSal}:`;
+      }
     }
 
     function updateCalculatedTotals() {
-      const emp = Math.max(0, Number(document.getElementById('cantidadEmpaquesInput').value || 0));
-      const pzasEmp = Math.max(1, Number(document.getElementById('piezasPorEmpaqueInput').value || 1));
-      const costoEmp = Math.max(0, Number(document.getElementById('costoEmpaqueInput').value || 0));
-      const totalPiezas = emp * pzasEmp;
-      const costoTotal = emp * costoEmp;
+      const emp = Math.max(0, parseFloat(document.getElementById('cantidadEmpaquesInput').value || 0));
+      const pzasEmp = Math.max(0.01, parseFloat(document.getElementById('piezasPorEmpaqueInput').value || 1));
+      const costoEmp = Math.max(0, parseFloat(document.getElementById('costoEmpaqueInput').value || 0));
+      const tipo = document.getElementById('tipoMovimiento').value;
+
+      const selectedId = document.getElementById('catalogoSelect').value;
+      const item = catalog.find((c) => c.id === selectedId);
+      const uSal = item ? (item.unidadSalida || 'Pieza') : 'oz';
+
+      let totalPiezas = 0;
+      let costoTotal = 0;
+
+      if (tipo === 'SALIDA') {
+        totalPiezas = emp;
+        costoTotal = (costoEmp / pzasEmp) * totalPiezas;
+      } else {
+        totalPiezas = emp * pzasEmp;
+        costoTotal = emp * costoEmp;
+      }
+
       const costoUnitario = totalPiezas > 0 ? costoTotal / totalPiezas : 0;
 
-      document.getElementById('calcTotalPiezas').textContent = totalPiezas.toLocaleString('es-MX');
+      document.getElementById('calcTotalPiezas').textContent = `${totalPiezas.toLocaleString('es-MX', { maximumFractionDigits: 2 })} ${uSal}`;
       document.getElementById('calcCostoTotal').textContent = formatCurrency(costoTotal);
-      document.getElementById('calcCostoUnitario').textContent = formatCurrency(costoUnitario);
+      document.getElementById('calcCostoUnitario').textContent = `${formatCurrency(costoUnitario)} / ${uSal}`;
     }
 
     function fillFormFromCatalogItem(item) {
@@ -1652,14 +1786,102 @@
       populateSubRamaOptions(item.rama || 'Hotel', item.subRama || '');
       document.getElementById('piezasPorEmpaqueInput').value = item.piezasPorEmpaque || 1;
       document.getElementById('costoEmpaqueInput').value = Number(item.costoEmpaque || 0).toFixed(2);
+      
+      const tipo = document.getElementById('tipoMovimiento').value;
+      updateLabelsForProduct(item, tipo);
       updateCalculatedTotals();
 
       const badge = document.getElementById('barcodeMatchBadge');
+      const uComp = item.unidadMedida || 'Pieza';
+      const uSal = item.unidadSalida || 'Pieza';
       if (item.codigo) {
-        badge.textContent = `Producto vinculado: ${item.codigo} (${item.piezasPorEmpaque || 1} pzas/empaque).`;
+        badge.textContent = `Vinculado: ${item.codigo} (1 ${uComp} = ${item.piezasPorEmpaque || 1} ${uSal}).`;
       } else {
-        badge.textContent = `Producto sin código de barras (${item.codigoAlterno || 'Identificación por nombre'}).`;
+        badge.textContent = `Producto sin código (${uComp} → ${uSal} | ${item.codigoAlterno || 'Identificación por nombre'}).`;
       }
+    }
+
+    // --- LÓGICA COMBOBOX BUSCADOR CATÁLOGO ---
+    function getFilteredCatalogOptions(query = '') {
+      const q = (query || '').trim().toLowerCase();
+      if (!q) return catalog;
+      return catalog.filter((item) =>
+        item.nombre.toLowerCase().includes(q) ||
+        (item.codigo || '').toLowerCase().includes(q) ||
+        (item.codigoAlterno || '').toLowerCase().includes(q)
+      );
+    }
+
+    function openCatalogDropdown() {
+      const query = document.getElementById('catalogoSearchInput').value || '';
+      renderCatalogDropdownOptions(query);
+      document.getElementById('catalogoDropdownList').classList.remove('hidden');
+    }
+
+    function closeCatalogDropdown() {
+      highlightedCatalogIndex = -1;
+      document.getElementById('catalogoDropdownList').classList.add('hidden');
+    }
+
+    function selectCatalogOption(item) {
+      if (!item) return;
+      document.getElementById('catalogoSelect').value = item.id;
+      const searchInput = document.getElementById('catalogoSearchInput');
+      const uComp = item.unidadMedida || 'Pieza';
+      const uSal = item.unidadSalida || 'Pieza';
+      searchInput.value = `${item.nombre}${item.codigo ? ` [${item.codigo}]` : ''}`;
+      document.getElementById('clearCatalogSearchBtn').classList.remove('hidden');
+      closeCatalogDropdown();
+      fillFormFromCatalogItem(item);
+    }
+
+    function renderCatalogDropdownOptions(query = '') {
+      const listEl = document.getElementById('catalogoDropdownList');
+      const matches = getFilteredCatalogOptions(query);
+      listEl.innerHTML = '';
+      highlightedCatalogIndex = -1;
+
+      if (matches.length === 0) {
+        listEl.innerHTML = `
+          <div class="px-3.5 py-3 text-xs text-slate-500">
+            No se encontraron productos con "<span class="font-semibold text-slate-800">${escapeAttr(query)}</span>".
+          </div>`;
+        return;
+      }
+
+      matches.forEach((item, idx) => {
+        const uComp = item.unidadMedida || 'Pieza';
+        const uSal = item.unidadSalida || 'Pieza';
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.dataset.index = String(idx);
+        btn.className = 'cat-option-item w-full text-left px-3.5 py-2.5 hover:bg-amber-50 focus:bg-amber-50 transition flex items-center justify-between gap-3';
+        btn.innerHTML = `
+          <div class="min-w-0">
+            <p class="text-xs sm:text-sm font-semibold text-slate-900 truncate">${item.nombre}</p>
+            <p class="text-[11px] text-slate-500">
+              ${item.codigo ? `<span class="font-mono">${item.codigo}</span>` : '<span class="italic text-amber-800">Sin código</span>'}
+              · 1 ${uComp} = ${item.piezasPorEmpaque || 1} ${uSal} · ${item.subRama || item.rama}
+            </p>
+          </div>
+          <span class="shrink-0 text-xs font-bold text-emerald-700">${formatCurrency(item.costoEmpaque)} / ${uComp}</span>
+        `;
+        btn.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          selectCatalogOption(item);
+        });
+        listEl.appendChild(btn);
+      });
+    }
+
+    function updateHighlightedCatalogOption(items) {
+      const nodes = document.querySelectorAll('#catalogoDropdownList .cat-option-item');
+      nodes.forEach((el, i) => {
+        el.classList.toggle('bg-amber-50', i === highlightedCatalogIndex);
+        if (i === highlightedCatalogIndex) {
+          el.scrollIntoView({ block: 'nearest' });
+        }
+      });
     }
 
     function lookupBarcodeInCatalog(code) {
@@ -1671,17 +1893,10 @@
     function renderCatalogUI() {
       document.getElementById('catalogCountBadge').textContent = `${catalog.length} ítems`;
 
-      const select = document.getElementById('catalogoSelect');
-      const prevSelected = select.value;
-      select.innerHTML = '<option value="">-- Seleccionar producto existente --</option>';
-
-      catalog.forEach((item) => {
-        const opt = document.createElement('option');
-        opt.value = item.id;
-        opt.textContent = `${item.nombre} ${item.codigo ? `[${item.codigo}]` : '[Sin código]'}`;
-        select.appendChild(opt);
-      });
-      if (prevSelected) select.value = prevSelected;
+      const currentSearchVal = document.getElementById('catalogoSearchInput').value || '';
+      if (!document.getElementById('catalogoDropdownList').classList.contains('hidden')) {
+        renderCatalogDropdownOptions(currentSearchVal);
+      }
 
       const quickQuery = (document.getElementById('quickCatalogSearch').value || '').trim().toLowerCase();
       const listEl = document.getElementById('quickCatalogList');
@@ -1700,6 +1915,8 @@
         listEl.innerHTML = '<p class="text-xs text-slate-400 py-4 text-center">No hay productos que coincidan.</p>';
       } else {
         filteredQuick.forEach((item) => {
+          const uComp = item.unidadMedida || 'Pieza';
+          const uSal = item.unidadSalida || 'Pieza';
           const cardBtn = document.createElement('button');
           cardBtn.type = 'button';
           cardBtn.className = 'w-full text-left p-2.5 rounded-xl border border-slate-200 hover:border-amber-400 hover:bg-amber-50/50 transition flex items-center justify-between gap-2';
@@ -1708,14 +1925,13 @@
               <p class="text-xs font-bold text-slate-900 truncate">${item.nombre}</p>
               <p class="text-[11px] text-slate-500">
                 ${item.codigo ? `<span class="font-mono">${item.codigo}</span>` : '<span class="italic text-amber-800">Sin código</span>'}
-                · ${item.piezasPorEmpaque || 1} pzas/emp · ${item.subRama || item.rama}
+                · 1 ${uComp} = ${item.piezasPorEmpaque || 1} ${uSal} · ${item.subRama || item.rama}
               </p>
             </div>
             <span class="shrink-0 text-xs font-bold text-emerald-700">${formatCurrency(item.costoEmpaque)}</span>
           `;
           cardBtn.addEventListener('click', () => {
-            select.value = item.id;
-            fillFormFromCatalogItem(item);
+            selectCatalogOption(item);
             switchView('registrar');
             showFeedback(`Cargado: ${item.nombre}`, 'ok');
           });
@@ -1749,13 +1965,15 @@
       }
 
       items.forEach((item) => {
+        const uComp = item.unidadMedida || 'Pieza';
+        const uSal = item.unidadSalida || 'Pieza';
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-50';
         tr.innerHTML = `
           <td class="py-2.5 px-3 font-semibold text-slate-900">${item.nombre}</td>
           <td class="py-2.5 px-3 font-mono text-xs text-slate-600">${item.codigo || '<span class="italic text-slate-400">Sin código</span>'}</td>
-          <td class="py-2.5 px-3 text-right font-semibold">${item.piezasPorEmpaque || 1}</td>
-          <td class="py-2.5 px-3 text-right font-semibold text-emerald-700">${formatCurrency(item.costoEmpaque)}</td>
+          <td class="py-2.5 px-3 text-right font-semibold">1 ${uComp} = ${item.piezasPorEmpaque || 1} ${uSal}</td>
+          <td class="py-2.5 px-3 text-right font-semibold text-emerald-700">${formatCurrency(item.costoEmpaque)} / ${uComp}</td>
           <td class="py-2.5 px-3 text-xs text-slate-600">${item.rama || 'Hotel'} · ${item.subRama || ''}</td>
           <td class="py-2.5 px-3 text-right whitespace-nowrap">
             <div class="inline-flex items-center gap-1.5">
@@ -1781,8 +1999,7 @@
     function useCatalogItemInMovement(id) {
       const item = catalog.find((c) => c.id === id);
       if (!item) return;
-      document.getElementById('catalogoSelect').value = item.id;
-      fillFormFromCatalogItem(item);
+      selectCatalogOption(item);
       switchView('registrar');
       showFeedback(`Producto "${item.nombre}" listo para registrar movimiento.`, 'ok');
     }
@@ -1794,6 +2011,8 @@
       document.getElementById('catNombreInput').value = item.nombre;
       document.getElementById('catCodigoInput').value = item.codigo || '';
       document.getElementById('catAlternoInput').value = item.codigoAlterno || '';
+      document.getElementById('catUnidadMedidaInput').value = item.unidadMedida || 'Pieza';
+      document.getElementById('catUnidadSalidaInput').value = item.unidadSalida || 'Pieza';
       document.getElementById('catPiezasEmpInput').value = item.piezasPorEmpaque || 1;
       document.getElementById('catCostoEmpInput').value = Number(item.costoEmpaque || 0).toFixed(2);
       document.getElementById('catStockMinInput').value = item.stockMinimo || 0;
@@ -1950,7 +2169,7 @@
               if (activeScannerTargetInputId === 'codigoBarrasInput') {
                 const matched = lookupBarcodeInCatalog(detectedCode);
                 if (matched) {
-                  fillFormFromCatalogItem(matched);
+                  selectCatalogOption(matched);
                   showFeedback(`Código escaneado: ${detectedCode} → ${matched.nombre}`, 'ok');
                 } else {
                   showFeedback(`Código escaneado: ${detectedCode}. Completa los datos.`, 'warn');
@@ -2000,6 +2219,8 @@
             codigo: cat.codigo || '',
             codigoAlterno: cat.codigoAlterno || '',
             almacen: alm,
+            unidadMedida: cat.unidadMedida || 'Pieza',
+            unidadSalida: cat.unidadSalida || 'Pieza',
             piezasPorEmpaque: cat.piezasPorEmpaque || 1,
             costoEmpaque: cat.costoEmpaque || 0,
             stockMinimo: cat.stockMinimo || 0,
@@ -2017,6 +2238,8 @@
             codigo: mov.codigo || '',
             codigoAlterno: '',
             almacen: alm,
+            unidadMedida: 'Pieza',
+            unidadSalida: 'Pieza',
             piezasPorEmpaque: mov.piezasPorEmpaque || 1,
             costoEmpaque: mov.costoEmpaque || 0,
             stockMinimo: 0,
@@ -2080,11 +2303,11 @@
       const bodPzas = allBod.reduce((acc, r) => acc + r.piezas, 0) + allAlm.reduce((acc, r) => acc + r.piezas, 0);
       const bodVal = allBod.reduce((acc, r) => acc + r.valor, 0) + allAlm.reduce((acc, r) => acc + r.valor, 0);
 
-      document.getElementById('kpiStockGeneralPzas').textContent = `${genPzas.toLocaleString('es-MX')} pzas`;
+      document.getElementById('kpiStockGeneralPzas').textContent = `${genPzas.toLocaleString('es-MX', { maximumFractionDigits: 1 })} unidades`;
       document.getElementById('kpiStockGeneralVal').textContent = `Valor: ${formatCurrency(genVal)}`;
-      document.getElementById('kpiStockBodegaPzas').textContent = `${bodPzas.toLocaleString('es-MX')} pzas`;
+      document.getElementById('kpiStockBodegaPzas').textContent = `${bodPzas.toLocaleString('es-MX', { maximumFractionDigits: 1 })} unidades`;
       document.getElementById('kpiStockBodegaVal').textContent = `Valor: ${formatCurrency(bodVal)}`;
-      document.getElementById('kpiStockTotalPzas').textContent = `${(genPzas + bodPzas).toLocaleString('es-MX')} pzas`;
+      document.getElementById('kpiStockTotalPzas').textContent = `${(genPzas + bodPzas).toLocaleString('es-MX', { maximumFractionDigits: 1 })} unidades`;
       document.getElementById('kpiStockTotalVal').textContent = `Valor total: ${formatCurrency(genVal + bodVal)}`;
 
       const baseRows = calculateStockRows(globalAlm);
@@ -2118,7 +2341,11 @@
           estadoHtml = '<span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-900">Reabastecer</span>';
         }
 
-        const empText = Number.isInteger(r.empaques) ? r.empaques : r.empaques.toFixed(1);
+        const uComp = r.unidadMedida || 'Pieza';
+        const uSal = r.unidadSalida || 'Pieza';
+        const empText = `${r.empaques.toFixed(2)} ${uComp}s`;
+        const pzasText = `${r.piezas.toLocaleString('es-MX', { maximumFractionDigits: 2 })} ${uSal}`;
+        
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-50';
         tr.innerHTML = `
@@ -2126,8 +2353,8 @@
           <td class="py-2.5 px-3 font-mono text-xs text-slate-600">${r.codigo || '<span class="italic text-slate-400">Sin código</span>'}</td>
           <td class="py-2.5 px-3 text-xs font-medium text-slate-700">${r.almacen}</td>
           <td class="py-2.5 px-3 text-right font-semibold">${empText}</td>
-          <td class="py-2.5 px-3 text-right font-bold text-slate-950">${r.piezas.toLocaleString('es-MX')}</td>
-          <td class="py-2.5 px-3 text-right text-slate-600">${r.stockMinimo}</td>
+          <td class="py-2.5 px-3 text-right font-bold text-slate-950">${pzasText}</td>
+          <td class="py-2.5 px-3 text-right text-slate-600">${r.stockMinimo} ${uSal}</td>
           <td class="py-2.5 px-3 text-center">${estadoHtml}</td>
           <td class="py-2.5 px-3 text-right font-semibold text-emerald-700">${formatCurrency(r.valor)}</td>
         `;
@@ -2188,9 +2415,9 @@
         }
       });
 
-      document.getElementById('posHotelPzas').textContent = `${hotelPzas.toLocaleString('es-MX')} pzas`;
+      document.getElementById('posHotelPzas').textContent = `${hotelPzas.toLocaleString('es-MX', { maximumFractionDigits: 1 })} unidades`;
       document.getElementById('posHotelImporte').textContent = formatCurrency(hotelImp);
-      document.getElementById('posRestPzas').textContent = `${restPzas.toLocaleString('es-MX')} pzas`;
+      document.getElementById('posRestPzas').textContent = `${restPzas.toLocaleString('es-MX', { maximumFractionDigits: 1 })} unidades`;
       document.getElementById('posRestImporte').textContent = formatCurrency(restImp);
 
       const cardsEl = document.getElementById('posCardsContainer');
@@ -2214,8 +2441,8 @@
           </div>
           <div class="mt-4 pt-3 border-t border-slate-200 flex items-baseline justify-between">
             <div>
-              <span class="block text-[11px] text-slate-500">Piezas</span>
-              <strong class="text-lg font-extrabold text-slate-900">${pos.piezas.toLocaleString('es-MX')}</strong>
+              <span class="block text-[11px] text-slate-500">Total Unidades</span>
+              <strong class="text-lg font-extrabold text-slate-900">${pos.piezas.toLocaleString('es-MX', { maximumFractionDigits: 1 })}</strong>
             </div>
             <div class="text-right">
               <span class="block text-[11px] text-slate-500">Importe</span>
@@ -2236,6 +2463,8 @@
       }
 
       filteredSales.forEach((m) => {
+        const itemCat = catalog.find((c) => c.nombre.toLowerCase() === m.producto.toLowerCase());
+        const uSal = itemCat ? (itemCat.unidadSalida || 'Pieza') : 'oz';
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-50';
         tr.innerHTML = `
@@ -2244,7 +2473,7 @@
           <td class="py-2.5 px-3 font-bold text-slate-900">${m.subRama}</td>
           <td class="py-2.5 px-3 text-xs text-slate-600">${m.almacen}</td>
           <td class="py-2.5 px-3 font-medium text-slate-900">${m.producto}</td>
-          <td class="py-2.5 px-3 text-right font-bold">${Number(m.totalPiezas).toLocaleString('es-MX')}</td>
+          <td class="py-2.5 px-3 text-right font-bold">${Number(m.totalPiezas).toLocaleString('es-MX', { maximumFractionDigits: 2 })} ${uSal}</td>
           <td class="py-2.5 px-3 text-right font-bold text-emerald-700">${formatCurrency(m.costoTotal)}</td>
         `;
         tbody.appendChild(tr);
@@ -2295,6 +2524,9 @@
           ? `<p class="font-semibold text-slate-800">${m.proveedor || 'Sin proveedor'}</p><p class="text-[11px] text-slate-500">${m.almacen}</p>`
           : `<p class="text-xs font-medium text-slate-700">${m.almacen}</p>`;
 
+        const itemCat = catalog.find((c) => c.nombre.toLowerCase() === m.producto.toLowerCase());
+        const uSal = itemCat ? (itemCat.unidadSalida || 'Pieza') : 'oz';
+
         const photoHtml = m.fotoDataUrl
           ? `<button type="button" onclick="openPhotoLightbox('${m.id} · ${escapeAttr(m.fotoNombre || 'Evidencia')}', '${m.fotoDataUrl}')"
                class="inline-block group" title="Ampliar foto">
@@ -2342,7 +2574,7 @@
             <p class="font-semibold text-slate-900">${m.producto}</p>
             <p class="text-[11px] font-mono text-slate-500">${m.codigo || 'Sin código'}</p>
           </td>
-          <td class="py-2.5 px-3 text-right font-bold">${Number(m.totalPiezas).toLocaleString('es-MX')}</td>
+          <td class="py-2.5 px-3 text-right font-bold">${Number(m.totalPiezas).toLocaleString('es-MX', { maximumFractionDigits: 2 })} ${uSal}</td>
           <td class="py-2.5 px-3 text-right font-semibold text-emerald-700">${formatCurrency(m.costoTotal)}</td>
           <td class="py-2.5 px-3 text-center">
             ${photoHtml}
@@ -2460,9 +2692,9 @@
         'Sub_Rama_Punto_Venta',
         'Codigo_Barras_SKU',
         'Producto',
-        'Cantidad_Empaques',
-        'Piezas_Por_Empaque',
-        'Total_Piezas',
+        'Cantidad_Empaques_Galones',
+        'Piezas_Por_Empaque_Tasa',
+        'Total_Piezas_Salida_Onzas',
         'Costo_Empaque',
         'Costo_Total',
         'Foto_Evidencia',
@@ -2558,21 +2790,82 @@
         populateSubRamaOptions(e.target.value);
       });
 
-      document.getElementById('catalogoSelect').addEventListener('change', (e) => {
-        const item = catalog.find((c) => c.id === e.target.value);
-        if (item) fillFormFromCatalogItem(item);
+      // --- LISTENERS DEL COMBOBOX CATÁLOGO ---
+      const catSearchInput = document.getElementById('catalogoSearchInput');
+      const catClearBtn = document.getElementById('clearCatalogSearchBtn');
+      const catToggleBtn = document.getElementById('toggleCatalogDropdownBtn');
+
+      catSearchInput.addEventListener('focus', () => {
+        openCatalogDropdown();
       });
+
+      catSearchInput.addEventListener('input', (e) => {
+        const val = e.target.value;
+        document.getElementById('catalogoSelect').value = '';
+        catClearBtn.classList.toggle('hidden', val.length === 0);
+        openCatalogDropdown();
+      });
+
+      catSearchInput.addEventListener('keydown', (e) => {
+        const dropdown = document.getElementById('catalogoDropdownList');
+        const matches = getFilteredCatalogOptions(catSearchInput.value);
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          if (dropdown.classList.contains('hidden')) openCatalogDropdown();
+          if (matches.length > 0) {
+            highlightedCatalogIndex = (highlightedCatalogIndex + 1) % matches.length;
+            updateHighlightedCatalogOption(matches);
+          }
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (matches.length > 0) {
+            highlightedCatalogIndex = (highlightedCatalogIndex - 1 + matches.length) % matches.length;
+            updateHighlightedCatalogOption(matches);
+          }
+        } else if (e.key === 'Enter' && !dropdown.classList.contains('hidden')) {
+          if (highlightedCatalogIndex >= 0 && matches[highlightedCatalogIndex]) {
+            e.preventDefault();
+            selectCatalogOption(matches[highlightedCatalogIndex]);
+          }
+        } else if (e.key === 'Escape') {
+          closeCatalogDropdown();
+        }
+      });
+
+      catToggleBtn.addEventListener('click', () => {
+        const dropdown = document.getElementById('catalogoDropdownList');
+        if (dropdown.classList.contains('hidden')) {
+          catSearchInput.focus();
+          openCatalogDropdown();
+        } else {
+          closeCatalogDropdown();
+        }
+      });
+
+      catClearBtn.addEventListener('click', () => {
+        catSearchInput.value = '';
+        document.getElementById('catalogoSelect').value = '';
+        catClearBtn.classList.add('hidden');
+        catSearchInput.focus();
+        openCatalogDropdown();
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('#catalogoSearchInput') &&
+            !e.target.closest('#catalogoDropdownList') &&
+            !e.target.closest('#toggleCatalogDropdownBtn') &&
+            !e.target.closest('#clearCatalogSearchBtn')) {
+          closeCatalogDropdown();
+        }
+      });
+
       document.getElementById('quickCatalogSearch').addEventListener('input', renderCatalogUI);
 
       document.getElementById('codigoBarrasInput').addEventListener('input', (e) => {
         const matched = lookupBarcodeInCatalog(e.target.value);
         if (matched) {
-          document.getElementById('productoNombreInput').value = matched.nombre;
-          document.getElementById('piezasPorEmpaqueInput').value = matched.piezasPorEmpaque;
-          document.getElementById('costoEmpaqueInput').value = Number(matched.costoEmpaque || 0).toFixed(2);
-          document.getElementById('ramaSelect').value = matched.rama || 'Hotel';
-          populateSubRamaOptions(matched.rama || 'Hotel', matched.subRama || '');
-          updateCalculatedTotals();
+          selectCatalogOption(matched);
           document.getElementById('barcodeMatchBadge').textContent = `Código reconocido: ${matched.nombre}`;
         }
       });
@@ -2609,6 +2902,9 @@
 
       document.getElementById('clearFormBtn').addEventListener('click', () => {
         document.getElementById('movementForm').reset();
+        document.getElementById('catalogoSelect').value = '';
+        document.getElementById('catalogoSearchInput').value = '';
+        document.getElementById('clearCatalogSearchBtn').classList.add('hidden');
         currentPhoto = { name: '', dataUrl: '' };
         document.getElementById('fotoPreviewContainer').classList.add('hidden');
         document.getElementById('barcodeMatchBadge').textContent = 'Puedes dejarlo en blanco si el producto no tiene código.';
@@ -2629,8 +2925,8 @@
           const subRama = tipo === 'TRASPASO' ? almacenDestino : document.getElementById('subRamaSelect').value;
           const codigo = document.getElementById('codigoBarrasInput').value.trim();
           const producto = document.getElementById('productoNombreInput').value.trim();
-          const empaques = Math.max(1, parseInt(document.getElementById('cantidadEmpaquesInput').value, 10) || 1);
-          const piezasPorEmpaque = Math.max(1, parseInt(document.getElementById('piezasPorEmpaqueInput').value, 10) || 1);
+          const empaques = Math.max(0.01, parseFloat(document.getElementById('cantidadEmpaquesInput').value) || 1);
+          const piezasPorEmpaque = Math.max(0.01, parseFloat(document.getElementById('piezasPorEmpaqueInput').value) || 1);
           const costoEmpaque = Math.max(0, parseFloat(document.getElementById('costoEmpaqueInput').value) || 0);
           const notas = document.getElementById('notasInput').value.trim();
 
@@ -2644,8 +2940,16 @@
             return;
           }
 
-          const totalPiezas = empaques * piezasPorEmpaque;
-          const costoTotal = Number((empaques * costoEmpaque).toFixed(2));
+          let totalPiezas = 0;
+          let costoTotal = 0;
+
+          if (tipo === 'SALIDA') {
+            totalPiezas = empaques;
+            costoTotal = Number(((costoEmpaque / piezasPorEmpaque) * totalPiezas).toFixed(2));
+          } else {
+            totalPiezas = empaques * piezasPorEmpaque;
+            costoTotal = Number((empaques * costoEmpaque).toFixed(2));
+          }
 
           if (tipo === 'SALIDA' || tipo === 'TRASPASO') {
             const rows = calculateStockRows(almacen);
@@ -2653,7 +2957,7 @@
             const available = matchRow ? matchRow.piezas : 0;
             if (totalPiezas > available) {
               showFeedback(
-                `Stock insuficiente en ${almacen} para "${producto}" (disponible: ${available} pzas, solicitado: ${totalPiezas} pzas).`,
+                `Stock insuficiente en ${almacen} para "${producto}" (disponible: ${available}, solicitado: ${totalPiezas}).`,
                 'warn'
               );
               return;
@@ -2687,7 +2991,7 @@
 
           const destinoLabel = tipo === 'TRASPASO' ? `→ ${almacenDestino}` : `→ ${rama} / ${subRama}`;
           showFeedback(
-            `${entry.id} · ${tipo} guardada (${totalPiezas} pzas · ${formatCurrency(costoTotal)}) en ${almacen} ${destinoLabel}.`,
+            `${entry.id} · ${tipo} guardada (${totalPiezas} unidades · ${formatCurrency(costoTotal)}) en ${almacen} ${destinoLabel}.`,
             'ok'
           );
 
@@ -2702,12 +3006,14 @@
         }
       });
 
-      // Alta rápida desde panel lateral (sincronizada con Sheets)
+      // Alta rápida desde panel lateral
       document.getElementById('addCatalogForm').addEventListener('submit', (e) => {
         e.preventDefault();
         const nombre = document.getElementById('newCatNombre').value.trim();
         const codigo = document.getElementById('newCatCodigo').value.trim();
-        const piezasPorEmpaque = Math.max(1, parseInt(document.getElementById('newCatPiezasEmp').value, 10) || 1);
+        const unidadMedida = document.getElementById('newCatUnidadMedida').value;
+        const unidadSalida = document.getElementById('newCatUnidadSalida').value;
+        const piezasPorEmpaque = Math.max(0.01, parseFloat(document.getElementById('newCatPiezasEmp').value) || 1);
         const costoEmpaque = Math.max(0, parseFloat(document.getElementById('newCatCostoEmp').value) || 0);
         const stockMinimo = Math.max(0, parseInt(document.getElementById('newCatStockMin').value, 10) || 0);
         const rama = document.getElementById('newCatRama').value;
@@ -2723,6 +3029,8 @@
           nombre,
           codigo,
           codigoAlterno: '',
+          unidadMedida,
+          unidadSalida,
           piezasPorEmpaque,
           costoEmpaque,
           stockMinimo,
@@ -2734,19 +3042,21 @@
         saveState();
         sincronizarCatalogoSheets('create', newItem);
         renderCatalogUI();
-        fillFormFromCatalogItem(newItem);
+        selectCatalogOption(newItem);
         document.getElementById('addCatalogForm').reset();
         showFeedback(`Producto "${nombre}" registrado en catálogo local y Google Sheets.`, 'ok');
       });
 
-      // Formulario completo de catálogo (alta y edición sincronizadas)
+      // Formulario completo de catálogo
       document.getElementById('fullCatalogForm').addEventListener('submit', (e) => {
         e.preventDefault();
         const editId = document.getElementById('editCatalogId').value;
         const nombre = document.getElementById('catNombreInput').value.trim();
         const codigo = document.getElementById('catCodigoInput').value.trim();
         const codigoAlterno = document.getElementById('catAlternoInput').value.trim();
-        const piezasPorEmpaque = Math.max(1, parseInt(document.getElementById('catPiezasEmpInput').value, 10) || 1);
+        const unidadMedida = document.getElementById('catUnidadMedidaInput').value;
+        const unidadSalida = document.getElementById('catUnidadSalidaInput').value;
+        const piezasPorEmpaque = Math.max(0.01, parseFloat(document.getElementById('catPiezasEmpInput').value) || 1);
         const costoEmpaque = Math.max(0, parseFloat(document.getElementById('catCostoEmpInput').value) || 0);
         const stockMinimo = Math.max(0, parseInt(document.getElementById('catStockMinInput').value, 10) || 0);
         const rama = document.getElementById('catRamaInput').value;
@@ -2768,6 +3078,8 @@
               nombre,
               codigo,
               codigoAlterno,
+              unidadMedida,
+              unidadSalida,
               piezasPorEmpaque,
               costoEmpaque,
               stockMinimo,
@@ -2784,6 +3096,8 @@
             nombre,
             codigo,
             codigoAlterno,
+            unidadMedida,
+            unidadSalida,
             piezasPorEmpaque,
             costoEmpaque,
             stockMinimo,
@@ -2872,8 +3186,8 @@
         const proveedor = tipo === 'ENTRADA' ? (document.getElementById('editMovProveedor').value || 'N/A') : 'N/A';
         const subRama = tipo === 'TRASPASO' ? almacenDestino : document.getElementById('editMovSubRama').value;
         const rama = ['Habitaciones', 'Lavandería', 'Recepción'].includes(subRama) ? 'Hotel' : 'Restaurante';
-        const empaques = Math.max(1, parseInt(document.getElementById('editMovEmpaques').value, 10) || 1);
-        const totalPiezas = Math.max(1, parseInt(document.getElementById('editMovPiezas').value, 10) || 1);
+        const empaques = Math.max(0.01, parseFloat(document.getElementById('editMovEmpaques').value) || 1);
+        const totalPiezas = Math.max(0.01, parseFloat(document.getElementById('editMovPiezas').value) || 1);
         const costoTotal = Math.max(0, parseFloat(document.getElementById('editMovCosto').value) || 0);
         const costoEmpaque = empaques > 0 ? Number((costoTotal / empaques).toFixed(2)) : costoTotal;
 
