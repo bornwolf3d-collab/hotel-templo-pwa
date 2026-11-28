@@ -1481,7 +1481,7 @@
               folio: dataOrId.id,
               fecha: dataOrId.fecha,
               tipo_movimiento: dataOrId.tipo,
-              proveedor: dataOrId.tipo === 'ENTRADA' ? (dataOrId.proveedor || 'N/A') : 'N/A',
+              proveedor: dataOrId.tipo === 'ENTRADA' ? (dataOrId.proveedor || 'Otros') : 'N/A',
               codigo_barras: dataOrId.codigo || '',
               producto: dataOrId.producto,
               rama: dataOrId.tipo === 'SALIDA' ? (dataOrId.rama || '') : '',
@@ -1492,6 +1492,8 @@
               total_piezas: dataOrId.totalPiezas,
               costo_total: dataOrId.costoTotal,
               foto_url: dataOrId.fotoNombre || '',
+              foto_base64: dataOrId.fotoDataUrl || '',
+              foto_nombre: dataOrId.fotoNombre || '',
               usuario: 'Hotel Templo PWA',
               notas: dataOrId.notas || ''
             };
@@ -2635,7 +2637,7 @@
     function requestDeleteMovement(id) {
       pendingDeleteMovementId = id;
       renderBitacoraView();
-      showFeedback(`Confirma en la fila si deseas eliminar el folio ${id}.`, 'warn');
+      showFeedback(`Confirms en la fila si deseas eliminar el folio ${id}.`, 'warn');
     }
 
     function cancelDeleteMovement() {
@@ -3279,7 +3281,7 @@
         const tipo = document.getElementById('editMovTipo').value;
         const almacen = document.getElementById('editMovAlmacen').value;
         const almacenDestino = tipo === 'TRASPASO' ? document.getElementById('editMovAlmacenDestino').value : '';
-        const proveedor = tipo === 'ENTRADA' ? (document.getElementById('editMovProveedor').value || 'N/A') : 'N/A';
+        const proveedor = tipo === 'ENTRADA' ? (document.getElementById('editMovProveedor').value || 'Otros') : 'N/A';
         const subRama = tipo === 'SALIDA' ? document.getElementById('editMovSubRama').value : '';
         const rama = tipo === 'SALIDA' ? (['Habitaciones', 'Lavandería', 'Recepción'].includes(subRama) ? 'Hotel' : 'Restaurante') : '';
         const empaques = Math.max(0.01, parseFloat(document.getElementById('editMovEmpaques').value) || 1);
